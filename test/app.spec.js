@@ -1,11 +1,11 @@
-const { expect } = require('chai')
-const supertest = require('supertest')
-const app = require('../src/app')
+const app = require('../src/app');
 
-describe('App', () => {
-    it('GET / responds with 200 containing "Hello, Boilerplate!', () => {
-        return supertest(app)
-        .get('/')
-        .expect(200, 'Hello, Boilerplate!')
-    })
-})
+describe('App tests', () => {
+    it(`GET / responds with 200 containing 'Server is up'`, () => {
+        return (
+            supertest(app)
+                .get('/')
+                .expect(200, 'Server is up')
+        );
+    });
+});
