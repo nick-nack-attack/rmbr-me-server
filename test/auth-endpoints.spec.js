@@ -36,7 +36,8 @@ describe( 'Auth Endpoints', () => {
                 helpers.seedTables(
                     db,
                     testUsers,
-                    []
+                    [],
+                    [],
                 )
             );
         });
@@ -97,7 +98,7 @@ describe( 'Auth Endpoints', () => {
             return supertest(app)
                 .post(`/api/auth/login`)
                 .send(userPasswordStartsSpaces)
-                .expect(400, { error: 'Password must not start or end with empty spaces' })
+                .expect(400, { error: 'Incorrect username or password' })
         })
 
         it(`responds 400 error when password ENDS with spaces`, () => {

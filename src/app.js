@@ -26,6 +26,10 @@ app.use('/api/rmbrs', rmbrsRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/users', usersRouter)
 
+app.get('/', (req, res) => {
+   res.send(`Server's buns are buttered`)
+})
+
 app.use(function errorHandler(error, req, res, next) {
   let response
   if (NODE_ENV === 'production') {

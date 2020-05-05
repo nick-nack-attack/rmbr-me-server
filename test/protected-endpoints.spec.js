@@ -22,9 +22,9 @@ describe('Protected endpoints', () => {
     beforeEach('seed db', () => 
         helpers.seedTables(
             db,
-            testUsers,
-            testPeople,
-            testRmbrs
+          testUsers,
+          testPeople,
+          testRmbrs,
         )
     );
 

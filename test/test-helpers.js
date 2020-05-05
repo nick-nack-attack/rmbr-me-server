@@ -146,7 +146,7 @@ function makeRmbrsArray(users, people) {
     ];
 };
 
-function seedTables(users, people, rmbrs) {
+function seedTables(db, users, people, rmbrs) {
     return db.transaction(async trx => {
 
         if (users.length > 0) {
@@ -165,7 +165,7 @@ function seedTables(users, people, rmbrs) {
             await trx.into('rmbrme_people').insert(people);
             await trx.raw(
                 `SELECT setval('rmbrme_people_id_seq', ?)`,
-                [projects[projects.length - 1].id]
+                [people[people.length - 1].id]
             );
         };
 

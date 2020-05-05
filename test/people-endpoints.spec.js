@@ -33,8 +33,9 @@ describe('People Endpoints', () => {
         return (
           helpers.seedTables(
             db,
-            testUsers,
-            []
+          testUsers,
+          testPeople,
+          testRmbrs,
           )
         );
       });
@@ -72,7 +73,7 @@ describe('People Endpoints', () => {
           });
           return (
             supertest(app)
-              .get('/api/projects')
+              .get('/api/people')
               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
               .expect(200, expectedPeople)
           ); 
@@ -90,7 +91,8 @@ describe('People Endpoints', () => {
         helpers.seedTables(
           db,
           testUsers,
-          []
+          testPeople,
+          testRmbrs,
         )
       );
 
@@ -114,7 +116,7 @@ describe('People Endpoints', () => {
           db,
           testUsers,
           testPeople,
-          testRmbrs
+          testRmbrs,
         )
       );
 
@@ -131,17 +133,17 @@ describe('People Endpoints', () => {
     });
   });
 
-  describe(`POST /api/projects`, () => {
+  describe(`POST /api/people`, () => {
     
-    context(`Given no projects`, () => {
+    context(`Given no people`, () => {
 
       beforeEach('seed db', () => {
         return (
           helpers.seedTables(
             db,
-            testUsers,
-            testPeople,
-            testRmbrs
+          testUsers,
+          testPeople,
+          testRmbrs,
           )
         );
       });
@@ -163,7 +165,7 @@ describe('People Endpoints', () => {
               expect(res.body).to.have.property('id');
               expect(res.body.person_name).to.eql(newPerson.person_name);
               expect(res.body.user_id).to.eql(testUser.id);
-              expect(res.headers.location).to.eql(`/api/projects/${res.body.id}`);
+              expect(res.headers.location).to.eql(`/api/people/${res.body.id}`);
               const expectedDateCreated = new Date().toLocaleString();
               const actualDateCreated = new Date(res.body.date_created).toLocaleString();
               expect(expectedDateCreated).to.eql(actualDateCreated);
@@ -181,9 +183,9 @@ describe('People Endpoints', () => {
         return (
           helpers.seedTables(
             db,
-            testUsers,
-            testPeople,
-            testRmbrs
+          testUsers,
+          testPeople,
+          testRmbrs,
           )
         );
       });
@@ -209,7 +211,7 @@ describe('People Endpoints', () => {
           db,
           testUsers,
           testPeople,
-          testRmbrs
+          testRmbrs,
         )
       );
     });
@@ -243,9 +245,9 @@ describe('People Endpoints', () => {
         return (
           helpers.seedTables(
             db,
-            testUsers,
-            testPeople,
-            testRmbrs
+          testUsers,
+          testPeople,
+          testRmbrs,
           )
         );
       });
@@ -273,9 +275,9 @@ describe('People Endpoints', () => {
         return (
           helpers.seedTables(
             db,
-            testUsers,
-            testPeople,
-            testRmbrs
+          testUsers,
+          testPeople,
+          testRmbrs,
           )
         );
       });
