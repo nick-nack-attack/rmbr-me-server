@@ -15,24 +15,32 @@ describe('Users Endpoints', function() {
             connection: process.env.TEST_DB_URL
         })
         app.set('db', db)
-    })
+    });
 
-    after('disconnect from db', () => db.destroy())
-    before('cleanup', () => helpers.cleanTables(db))
-    afterEach('cleanup', () => helpers.cleanTables(db))
+    after('disconnect from db', () => db.destroy());
+    before('cleanup', () => helpers.cleanTables(db));
+    afterEach('cleanup', () => helpers.cleanTables(db));
 
     describe(`POST /api/users`, () => {
 
         context('User Validation', () => {
 
-            beforeEach('insert users', () =>
-                helpers.seedUsers(db, testUsers)
-            )
+            beforeEach('insert users', () => {
+                return (
+                    helpers.seedTables(
+                        db,
+                        testUsers,
+                        [],
+                        [],
+                    )
+                );
+            });
 
             const requiredFields = [ 'user_name', 'password' ]
 
             requiredFields.forEach(field => {
                 const registerAttemptBody = {
+                    id: 10,
                     user_name: 'test user_name',
                     password: 'test password',
                 }

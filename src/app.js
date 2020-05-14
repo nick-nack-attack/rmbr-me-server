@@ -7,9 +7,8 @@ const { NODE_ENV } = require('./config')
 
 const peopleRouter = require('./people/people-router')
 const rmbrsRouter = require('./rmbrs/rmbrs-router')
-const usersRouter = require('./users/users-router')
-
 const authRouter = require('./auth/auth-router')
+const usersRouter = require('./users/users-router')
 
 const app = express()
 

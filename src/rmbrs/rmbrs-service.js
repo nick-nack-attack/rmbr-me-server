@@ -2,6 +2,12 @@ const xss = require('xss')
 
 const RmbrsService = {
 
+    getAllRmbrs(db) {
+        return db
+            .from('rmbrme_rmbrs')
+            .select('*')
+    },
+
     getById(db, id) {
         return db
             .from('rmbrme_rmbrs')

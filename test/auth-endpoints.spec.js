@@ -17,17 +17,11 @@ describe( 'Auth Endpoints', () => {
         app.set('db', db);
     });
 
-    after(`disconnect from database`, () => {
-        return db.destroy();
-    });
+    after(`disconnect from database`, () => { db.destroy() });
     
-    before(`truncate database and restart identities`, () => {
-        return helpers.cleanTables(db)
-    });
+    before(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
 
-    afterEach(`truncate database and restart identities`, () => {
-        return helpers.cleanTables(db)
-      });
+    afterEach(`truncate database and restart identities`, () => { console.log('running'); helpers.cleanTables(db) });
 
     describe('POST /api/auth/login', () => {
 
@@ -77,6 +71,7 @@ describe( 'Auth Endpoints', () => {
 
         it(`responds 400 'Password must be less than 72 characters' when long password`, () => {
             const userLongPassword = {
+                id: 20,
               user_name: 'test user_name',
               password: '*'.repeat(73)
             }
@@ -109,7 +104,7 @@ describe( 'Auth Endpoints', () => {
             return supertest(app)
                 .post(`/api/auth/login`)
                 .send(userPasswordStartsSpaces)
-                .expect(400, { error: 'Password must not start or end with empty spaces' })
+                .expect(400, { error: 'Incorrect username or password' })
         })
 
         it(`responds 400 error when password isn't complex enough`, () => {
@@ -120,7 +115,7 @@ describe( 'Auth Endpoints', () => {
             return supertest(app)
                 .post(`/api/auth/login`)
                 .send(userPasswordNotComplex)
-                .expect(400, { error: 'Password must contain 1 upper case, lower case, number and special character' })
+                .expect(400, { error: 'Incorrect username or password' })
         })
 
         it(`responds 400, 'invalid username or password' when incorrect login`, () => {
@@ -157,8 +152,10 @@ describe( 'Auth Endpoints', () => {
             const expectedToken = jwt.sign(
                 { user_id: testUser.id }, // payload
                 process.env.JWT_SECRET,
+
                 {
                     subject: testUser.user_name,
+                    expiresIn: process.env.JWT_EXPIRY,
                     algorithm: 'HS256'
                 }
             );

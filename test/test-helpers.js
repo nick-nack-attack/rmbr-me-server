@@ -261,7 +261,6 @@ module.exports = {
     makeFixtures,
     cleanTables,
     seedTables,
-
     makeUsersArray,
     makePeopleArray,
     makeRmbrsArray,

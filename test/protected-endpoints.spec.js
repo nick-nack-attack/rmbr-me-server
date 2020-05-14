@@ -14,7 +14,6 @@ describe('Protected endpoints', () => {
         });
         app.set('db', db);
     });
-
     after(`disconnect from database`, () => { db.destroy() });
     before(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
     afterEach(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
@@ -25,7 +24,7 @@ describe('Protected endpoints', () => {
           testUsers,
           testPeople,
           testRmbrs,
-        )
+        ), console.log(testRmbrs)
     );
 
     const protectedEndpoints = [
