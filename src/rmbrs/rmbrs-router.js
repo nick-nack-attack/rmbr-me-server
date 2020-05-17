@@ -8,7 +8,7 @@ const jsonParser = express.json()
 
 rmbrsRouter
     .route('/')
-    .all(requireAuth)
+    // .all(requireAuth)
     .get((req, res, next) => {
         RmbrsService.getAllRmbrs(req.app.get('db'))
             .then(rbr => {
@@ -39,7 +39,7 @@ rmbrsRouter
 
 rmbrsRouter
     .route('/:rmbr_id')
-    .all(requireAuth)
+    // .all(requireAuth)
     .all(checkRmbrExists)
     .get((req, res) => {
         res.json(RmbrsService.serializeRmbr(res.rmbr))

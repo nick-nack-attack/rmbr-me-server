@@ -2,32 +2,28 @@ const AuthService = require('../auth/auth-service')
 
 function requireAuth(req, res, next) {
 
-    const authToken = req
-                        .get('Authorization') || ''
+    const authToken = req.get('Authorization') || ''
 
-    let bearerToken
+    let bearerToken;
 
-    if (!authToken
-        .toLowerCase()
-        .startsWith('bearer ')) {
+    if (!authToken.toLowerCase().startsWith('bearer ')) {
             return res
                 .status(401)
-                .json({ error: 'Missing bearer token' })
-        } else { bearerToken = authToken.slice(7, authToken.length) }
-
+                .json({ error: 'Missing bearer token!!!' })
+        }
+    else { bearerToken = authToken.slice(7, authToken.length)  }
+    console.log('bearer:', bearerToken)
     try {
-        const payload = AuthService
-                            .verifyJwt(bearerToken)
-
-        AuthService
-            .getUserWithUsername(
+        console.log('trying!!!')
+        const payload = AuthService.verifyJwt(bearerToken)
+        console.log('payload:', payload)
+        AuthService.getUserWithUsername(
                 req.app.get('db'),
                 payload.sub
             )
             .then(user => {
                 if(!user)
-                    return res
-                        .status(401)
+                    return res.status(401)
                         .json({ error: 'Unauthorized request' })
                     req.user = user
                     next()          
@@ -36,8 +32,9 @@ function requireAuth(req, res, next) {
                 console.log(err)
                 next(err)
             })
-} catch (error) {
-    res
+}
+    catch (error) {
+        res
         .status(401)
         .json({ error: 'Unauthorized request' })
     }

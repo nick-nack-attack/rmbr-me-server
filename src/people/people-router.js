@@ -2,22 +2,40 @@ const express = require('express')
 const PeopleService = require('./people-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 
+const jsonParser = express.json()
 const peopleRouter = express.Router()
 
 peopleRouter
     .route('/')
-    .all(requireAuth)
+    // .all(requireAuth)
     .get((req, res, next) => {
         PeopleService.getAllPeople(req.app.get('db'))
             .then(people => {
                 res.json(people.map(PeopleService.serializePerson))
             })
             .catch(next)
-    });
+    })
+    .post( jsonParser, (req, res, next) => {
+        const { person_name, type_of_person, user_id } = req.body
+        const { newPerson } = { person_name, type_of_person, user_id }
+        for (const [key,value] of Object.entries(newPerson))
+            if (value == null)
+                return res.status(400).json({error: `Missing ${key} in request`})
+        PeopleService.insertPerson(
+            req.app.get('db'),
+            newPerson
+        )
+            .then(person => {
+                res.status(201)
+                    .location(path.posix.join(req.originalUrl, `/${person.id}`))
+                    .json(PeopleService.serializePerson(person))
+            })
+            .catch(next)
+    })
 
 peopleRouter
     .route('/:person_id')
-    .all(requireAuth)
+    // .all(requireAuth)
     .all(checkPersonExists)
     .get((req, res) => { 
         res.json(PeopleService.serializePerson(res.person))
@@ -25,7 +43,7 @@ peopleRouter
 
 peopleRouter
     .route('/:person_id/rmbrs')
-    .all(requireAuth)
+    // .all(requireAuth)
     .all(checkPersonExists)
     .get((req, res, next) => {
         PeopleService.getRmbrsForPerson(

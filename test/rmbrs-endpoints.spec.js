@@ -23,7 +23,7 @@ describe(`Tasks Endpoints`, () => {
     before(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
     afterEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
 
-    describe(`GET /api/tasks`, () => {
+    describe(`GET /api/rmbrs`, () => {
         
         context(`given no rmbrs`, () => {
 

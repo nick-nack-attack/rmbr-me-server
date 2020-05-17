@@ -3,10 +3,10 @@ const path = require('path')
 const UsersService = require('./users-service')
 
 const usersRouter = express.Router()
-const jsonParser = express.json()
+const jsonBodyParser = express.json()
 
 usersRouter
-  .post('/', jsonParser, (req, res, next) => {
+  .post('/', jsonBodyParser, (req, res, next) => {
 
     const { password, user_name } = req.body
 

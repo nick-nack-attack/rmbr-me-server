@@ -46,6 +46,17 @@ const PeopleService = {
             .first()
     },
 
+    insertPerson(db, newPerson) {
+        return db
+            .insert(newPerson)
+            .into('rmbrme_people')
+            .returning('*')
+            .then(([person]) => person)
+            .then(person =>
+                PeopleService.getbyId(db, person.id)
+            )
+    },
+
     serializePerson(person) {
 
         const { user } = person
