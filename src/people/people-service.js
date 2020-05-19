@@ -45,21 +45,32 @@ const PeopleService = {
             .where('ppl.id', id)
             .first()
     },
+    getPeoplebyUserId(db, user_id) {
+        return PeopleService.getAllPeople(db)
+            .where('usr.id', user_id)
+    },
 
     insertPerson(db, newPerson) {
         return db
-            .insert(newPerson)
-            .into('rmbrme_people')
-            .returning('*')
-            .then(([person]) => person)
-            .then(person =>
-                PeopleService.getbyId(db, person.id)
-            )
-    },
+          .insert(newPerson)
+          .into('rmbrme_people')
+          .returning('*')
+          .then(([person]) => person);
+      },
+    // insertPerson(db, newPerson) {
+    //         return db
+    //             .insert(newPerson)
+    //             .into('rmbrme_people')
+    //             .returning('*')
+    //             .then(([returnPerson]) => returnPerson)
+    //             .then(person =>
+    //                 PeopleService.getbyId(db, person.id)
+    //         )
+    // },
 
     serializePerson(person) {
 
-        const { user } = person
+        // const { user } = person
     
         return {
           id: person.id,
@@ -70,65 +81,31 @@ const PeopleService = {
           last_contact: person.last_contact,
           date_created: person.date_created,
           date_modified: person.date_modified,
-          user: {
-            id: user.id,
-            user_name: user.user_name,
-            date_created: new Date(user.date_created)
-          },
+        //   user: {
+        //     id: user.id,
+        //     user_name: user.user_name,
+        //     date_created: new Date(user.date_created)
+        //   },
         }  
     },
 
     serializePersonRmbr(rmbr) {
-        
-        const { user } = rmbr
 
         return {
             id: rmbr.id,
             rmbr_title: xss(rmbr.rmbr_title),
-            rmbr_text: xss(rmbr.rmbr_text),
             category: rmbr.category,
-            person_id: rmbr.person_id,
-            date_created: rmbr.date_created,
-            user : {
-                id: user.id,
-                user_name: user.user_name,
-                date_created: new Date(user.date_created)
-            },
+            rmbr_text: xss(rmbr.rmbr_text),
+            person_id: rmbr.person_id
         }
     },
 
     getRmbrsForPerson(db, person_id) {
         return db
-            .from('rmbrme_rmbrs AS rbr')
-            .select(
-                'rbr.id',
-                'rbr.rmbr_title',
-                'rbr.rmbr_text',
-                'rbr.category',
-                'rbr.date_created',
-                'rbr.person_id',
-                'rbr.date_modified',
-                db.raw(
-                    `json_strip_json(
-                        (SELECT tmp FROM (
-                            SELECT
-                                usr.id,
-                                usr.user_name,
-                                usr.date_created
-                        ) tmp)
-                    )
-                ) AS "user"`
-            )
-        )
-        .where('rbr.person_id', person_id)
-        .leftJoin(
-            'rmbrme_users AS usr',
-            'rbr.user_id',
-            'usr.id'
-        )
-        .groupBy('rbr.id', 'usr.id')
+            .from('rmbrme_rmbrs')
+            .select('*')
+            .where('person_id',person_id)
     }
-        
 }
 
 module.exports = PeopleService

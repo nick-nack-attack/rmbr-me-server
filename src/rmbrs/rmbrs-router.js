@@ -17,11 +17,11 @@ rmbrsRouter
             .catch(next)
     })
     .post( jsonParser, (req, res, next) => {
-        const { rmbr_title, category, rmbr_xtra_text, person_id } = req.body
-        const newRmbr = { rmbr_title, category, rmbr_xtra_text, person_id }
+        const { rmbr_title, category, rmbr_text, person_id, user_id } = req.body
+        const newRmbr = { rmbr_title, category, rmbr_text, person_id, user_id }
 
         for (const [key,value] of Object.entries(newRmbr))
-            if (value == null)
+            if (value === null) 
                 return res.status(400).json({error: `Missing ${key} in request`})
 
         RmbrsService.insertRmbr(
@@ -29,6 +29,7 @@ rmbrsRouter
             newRmbr
         )
         .then(rmbr => {
+            console.log('POST RMBRS FIRING!')
             res
                 .status(201)
                 .location(path.posix.join(req.originalUrl, `/${rmbr.id}`))

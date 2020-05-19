@@ -32,7 +32,7 @@ const RmbrsService = {
             id: rmbr.id,
             rmbr_title: xss(rmbr.rmbr_title),
             category: rmbr.category,
-            rmbr_xtra_text: xss(rmbr.rmbr_xtra_text),
+            rmbr_text: xss(rmbr.rmbr_text),
             person_id: rmbr.person_id
         }
     }

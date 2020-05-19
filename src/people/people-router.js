@@ -17,34 +17,43 @@ peopleRouter
     })
     .post( jsonParser, (req, res, next) => {
         const { person_name, type_of_person, user_id } = req.body
-        const { newPerson } = { person_name, type_of_person, user_id }
-        for (const [key,value] of Object.entries(newPerson))
-            if (value == null)
-                return res.status(400).json({error: `Missing ${key} in request`})
+        const newPerson = { person_name, type_of_person, user_id }
+        for (const field of ['person_name', 'type_of_person','user_id'])
+                if (!req.body[field])
+                  return res.status(400).json({
+                    error: `Missing '${field}' in request body`
+                  })
         PeopleService.insertPerson(
             req.app.get('db'),
             newPerson
         )
             .then(person => {
-                res.status(201)
-                    .location(path.posix.join(req.originalUrl, `/${person.id}`))
+                res
+                .status(201)
+                .location(`/api/people/${person.id}`)
+                    // .location(path.posix.join(req.originalUrl, `/${person.id}`))
                     .json(PeopleService.serializePerson(person))
             })
             .catch(next)
     })
 
 peopleRouter
-    .route('/:person_id')
+    .route('/users/:user_id')
     // .all(requireAuth)
-    .all(checkPersonExists)
-    .get((req, res) => { 
-        res.json(PeopleService.serializePerson(res.person))
-    });
+    // .all(checkPersonExists)
+    .get((req, res, next) => {
+        const { user_id } = req.params;
+        PeopleService.getPeoplebyUserId(req.app.get('db'), user_id)
+          .then((person) => {
+            res.json(person);
+          })
+          .catch(next);
+      });
 
 peopleRouter
     .route('/:person_id/rmbrs')
     // .all(requireAuth)
-    .all(checkPersonExists)
+    // .all(checkPersonExists)
     .get((req, res, next) => {
         PeopleService.getRmbrsForPerson(
             req.app.get('db'),
@@ -56,25 +65,39 @@ peopleRouter
         .catch(next)
     });
 
-// Wait for promises, yo.
-async function checkPersonExists(req, res, next) {
-    try {
-        const person = await PeopleService.getbyId(
+peopleRouter
+    .route('/:person_id')
+    .get((req, res, next) => {
+        const { person_id } = req.params;
+        PeopleService.getbyId(
             req.app.get('db'),
-            req.params.person_id
+            person_id
         )
-
-    if(!person)
-        return res.status(404).json({
-            error:`Person doesn't exist`
+        .then((person) => {
+            res.json(person)
         })
+        .catch(next)
+    })
 
-    res.person = person
-    next()
-    }
-    catch(error) { 
-        next(error) 
-    }
-}
+// Wait for promises, yo.
+// async function checkPersonExists(req, res, next) {
+//     try {
+//         const person = await PeopleService.getPeoplebyUserId(
+//             req.app.get('db'),
+//             req.params.user_id
+//         )
+
+//     if(!person)
+//         return res.status(404).json({
+//             error:`User id doesn't exist`
+//         })
+
+//     res.person = person
+//     next()
+//     }
+//     catch(error) { 
+//         next(error) 
+//     }
+// }
 
 module.exports = peopleRouter

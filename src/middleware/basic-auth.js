@@ -15,7 +15,7 @@ function requireAuth(req, res, next) {
     const [ tokenUsername, tokenPassword ] = AuthService.parseBasicToken(basicToken)
 
     if (!tokenUsername || !tokenPassword) {
-        return res.status(401).json({ error: 'Unauthorized request' })
+        return res.status(401).json({ error: 'Unauthorized request 1' })
     }
 
     AuthService.getUserWithUsername(
@@ -24,13 +24,13 @@ function requireAuth(req, res, next) {
     )
     .then(user => {
         if(!user) {
-            return res.status(401).json({ error: 'Unauthorized request' })
+            return res.status(401).json({ error: 'Unauthorized request 2 from basic' })
         }
 
         return bcrypt.compare(tokenPassword, user.password)
             .then(passwordsMatch => {
                 if(!passwordsMatch) {
-                    return res.status(401).json({ error: 'Unauthorized request' })
+                    return res.status(401).json({ error: 'Unauthorized request 3' })
                 }
                 req.user = user
                 next()
