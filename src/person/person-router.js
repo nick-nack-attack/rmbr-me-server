@@ -1,17 +1,17 @@
-const express = require('express')
-const PeopleService = require('./people-service')
+const express = require('./node_modules/express')
+const PersonService = require('./person-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 
 const jsonParser = express.json()
-const peopleRouter = express.Router()
+const personRouter = express.Router()
 
-peopleRouter
+personRouter
     .route('/')
     // .all(requireAuth)
     .get((req, res, next) => {
-        PeopleService.getAllPeople(req.app.get('db'))
+        PersonService.getAllPeople(req.app.get('db'))
             .then(people => {
-                res.json(people.map(PeopleService.serializePerson))
+                res.json(people.map(PersonService.serializePerson))
             })
             .catch(next)
     })
@@ -23,7 +23,7 @@ peopleRouter
                   return res.status(400).json({
                     error: `Missing '${field}' in request body`
                   })
-        PeopleService.insertPerson(
+        PersonService.insertPerson(
             req.app.get('db'),
             newPerson
         )
@@ -32,44 +32,44 @@ peopleRouter
                 .status(201)
                 .location(`/api/people/${person.id}`)
                     // .location(path.posix.join(req.originalUrl, `/${person.id}`))
-                    .json(PeopleService.serializePerson(person))
+                    .json(PersonService.serializePerson(person))
             })
             .catch(next)
     })
 
-peopleRouter
+personRouter
     .route('/users/:user_id')
     // .all(requireAuth)
     // .all(checkPersonExists)
     .get((req, res, next) => {
         const { user_id } = req.params;
-        PeopleService.getPeoplebyUserId(req.app.get('db'), user_id)
+        PersonService.getPeoplebyUserId(req.app.get('db'), user_id)
           .then((person) => {
             res.json(person);
           })
           .catch(next);
       });
 
-peopleRouter
+personRouter
     .route('/:person_id/rmbrs')
     // .all(requireAuth)
     // .all(checkPersonExists)
     .get((req, res, next) => {
-        PeopleService.getRmbrsForPerson(
+        PersonService.getRmbrsForPerson(
             req.app.get('db'),
             req.params.person_id
         )
         .then(rmbrs => {
-            res.json(rmbrs.map(PeopleService.serializePersonRmbr))
+            res.json(rmbrs.map(PersonService.serializePersonRmbr))
         })
         .catch(next)
     });
 
-peopleRouter
+personRouter
     .route('/:person_id')
     .get((req, res, next) => {
         const { person_id } = req.params;
-        PeopleService.getbyId(
+        PersonService.getbyId(
             req.app.get('db'),
             person_id
         )
@@ -82,7 +82,7 @@ peopleRouter
 // Wait for promises, yo.
 // async function checkPersonExists(req, res, next) {
 //     try {
-//         const person = await PeopleService.getPeoplebyUserId(
+//         const person = await PersonService.getPeoplebyUserId(
 //             req.app.get('db'),
 //             req.params.user_id
 //         )
@@ -100,4 +100,4 @@ peopleRouter
 //     }
 // }
 
-module.exports = peopleRouter
+module.exports = personRouter

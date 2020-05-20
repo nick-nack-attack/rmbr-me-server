@@ -1,6 +1,6 @@
-const xss = require('xss')
+const xss = require('./node_modules/xss')
 
-const PeopleService = {
+const PersonService = {
 
     getAllPeople(db) {
         return db
@@ -41,12 +41,12 @@ const PeopleService = {
     },
 
     getbyId(db, id) {
-        return PeopleService.getAllPeople(db)
+        return PersonService.getAllPeople(db)
             .where('ppl.id', id)
             .first()
     },
     getPeoplebyUserId(db, user_id) {
-        return PeopleService.getAllPeople(db)
+        return PersonService.getAllPeople(db)
             .where('usr.id', user_id)
     },
 
@@ -64,7 +64,7 @@ const PeopleService = {
     //             .returning('*')
     //             .then(([returnPerson]) => returnPerson)
     //             .then(person =>
-    //                 PeopleService.getbyId(db, person.id)
+    //                 PersonService.getbyId(db, person.id)
     //         )
     // },
 
@@ -108,4 +108,4 @@ const PeopleService = {
     }
 }
 
-module.exports = PeopleService
+module.exports = PersonService

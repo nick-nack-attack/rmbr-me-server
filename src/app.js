@@ -5,10 +5,10 @@ const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 
-const peopleRouter = require('./people/people-router')
-const rmbrsRouter = require('./rmbrs/rmbrs-router')
+const personRouter = require('./person/person-router')
+const rmbrRouter = require('./rmbr/rmbr-router')
 const authRouter = require('./auth/auth-router')
-const usersRouter = require('./users/users-router')
+const userRouter = require('./user/user-router')
 
 const app = express()
 
@@ -20,10 +20,10 @@ app.use(morgan(morganOption))
 app.use(cors())
 app.use(helmet())
 
-app.use('/api/people', peopleRouter)
-app.use('/api/rmbrs', rmbrsRouter)
+app.use('/api/person', personRouter)
+app.use('/api/rmbr', rmbrRouter)
 app.use('/api/auth', authRouter)
-app.use('/api/users', usersRouter)
+app.use('/api/user', userRouter)
 
 app.get('/', (req, res) => {
    res.send(`Server's buns are buttered`)

@@ -1,6 +1,6 @@
 const xss = require('xss')
 
-const RmbrsService = {
+const RmbrService = {
 
     getAllRmbrs(db) {
         return db
@@ -23,7 +23,7 @@ const RmbrsService = {
             .returning('*')
             .then(([rmbr]) => rmbr)
             .then(rmbr =>
-                RmbrsService.getById(db, rmbr.id)
+                RmbrService.getById(db, rmbr.id)
             )
     },
 
@@ -39,4 +39,4 @@ const RmbrsService = {
 
 }
 
-module.exports = RmbrsService
+module.exports = RmbrService

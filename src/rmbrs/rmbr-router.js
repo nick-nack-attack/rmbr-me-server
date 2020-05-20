@@ -1,18 +1,18 @@
 const express = require('express')
 const path = require('path')
-const RmbrsService = require('./rmbrs-service.js')
+const RmbrService = require('./rmbr-service.js')
 const { requireAuth } = require('../middleware/jwt-auth')
 
-const rmbrsRouter = express.Router()
+const rmbrRouter = express.Router()
 const jsonParser = express.json()
 
-rmbrsRouter
+rmbrRouter
     .route('/')
     // .all(requireAuth)
     .get((req, res, next) => {
-        RmbrsService.getAllRmbrs(req.app.get('db'))
+        RmbrService.getAllRmbrs(req.app.get('db'))
             .then(rbr => {
-                res.json(rbr.map(RmbrsService.serializeRmbr))
+                res.json(rbr.map(RmbrService.serializeRmbr))
             })
             .catch(next)
     })
@@ -24,7 +24,7 @@ rmbrsRouter
             if (value === null) 
                 return res.status(400).json({error: `Missing ${key} in request`})
 
-        RmbrsService.insertRmbr(
+        RmbrService.insertRmbr(
             req.app.get('db'),
             newRmbr
         )
@@ -33,25 +33,25 @@ rmbrsRouter
             res
                 .status(201)
                 .location(path.posix.join(req.originalUrl, `/${rmbr.id}`))
-                .json(RmbrsService.serializeRmbr(rmbr))
+                .json(RmbrService.serializeRmbr(rmbr))
         })
         .catch(next)
     })
 
-rmbrsRouter
+rmbrRouter
     .route('/:rmbr_id')
     // .all(requireAuth)
     .all(checkRmbrExists)
     .get((req, res) => {
-        res.json(RmbrsService.serializeRmbr(res.rmbr))
+        res.json(RmbrService.serializeRmbr(res.rmbr))
     })
     .patch((req, res) => {
-         res.json(RmbrsService.serializeRmbr(res.rmbr))
+         res.json(RmbrService.serializeRmbr(res.rmbr))
      })
 
 async function checkRmbrExists(req, res, next) {
     try {
-        const rmbr = await RmbrsService.getById(
+        const rmbr = await RmbrService.getById(
             req.app.get('db'),
             req.params.rmbr_id
         )
@@ -67,4 +67,4 @@ async function checkRmbrExists(req, res, next) {
     }
 }
 
-    module.exports = rmbrsRouter
+    module.exports = rmbrRouter

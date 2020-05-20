@@ -3,7 +3,7 @@ const xss = require('xss')
 
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/
 
-const UsersService = {
+const UserService = {
 
   hasUserWithUserName(db, user_name) {
     return db('rmbrme_users')
@@ -50,4 +50,4 @@ const UsersService = {
 
 }
 
-module.exports = UsersService
+module.exports = UserService
