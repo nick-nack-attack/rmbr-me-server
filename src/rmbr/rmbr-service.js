@@ -16,6 +16,13 @@ const RmbrService = {
             .first()
     },
 
+    getByUserId(db, uid) {
+        return db
+            .from('rmbrme_rmbrs')
+            .select('*')
+            .where('user_id', uid)
+    },
+
     insertRmbr(db, newRmbr) {
         return db
             .insert(newRmbr)
@@ -27,13 +34,30 @@ const RmbrService = {
             )
     },
 
+    deleteRmbr(db, id) {
+        return db
+            .from('rmbrme_rmbrs')
+            .where('id', id)
+            .delete()
+    },
+
+    updateRmbr(db, id, newRmbrFields) {
+        return db
+            .from('rmbrme_rmbrs')
+            .where('id', id)
+            .update(newRmbrFields)
+    },
+
     serializeRmbr(rmbr) {
         return {
             id: rmbr.id,
+            person_id: rmbr.person_id,
+            user_id: rmbr.user_id,
             rmbr_title: xss(rmbr.rmbr_title),
-            category: rmbr.category,
             rmbr_text: xss(rmbr.rmbr_text),
-            person_id: rmbr.person_id
+            category: rmbr.category,
+            date_created: rmbr.date_created,
+            date_modified: rmbr.date_modified
         }
     }
 

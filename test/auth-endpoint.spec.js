@@ -4,10 +4,10 @@ const knex = require('knex');
 const jwt = require('jsonwebtoken');
 const helpers = require('./test-helpers');
 
-describe( 'Auth Endpoints', () => {
+describe( 'Auth Endpoint', () => {
     let db;
-    const { testUsers } = helpers.makeFixtures();
-    const testUser = testUsers[0];
+    const { testUserArray } = helpers.makeFixtures();
+    const testUser = testUserArray[0];
 
     before('make db connection', () => {
         db = knex({
@@ -25,11 +25,11 @@ describe( 'Auth Endpoints', () => {
 
     describe('POST /api/auth/login', () => {
 
-        beforeEach('insert users', () => {
+        beforeEach('insert user', () => {
             return (
                 helpers.seedTables(
                     db,
-                    testUsers,
+                    testUserArray,
                     [],
                     [],
                 )
@@ -64,7 +64,7 @@ describe( 'Auth Endpoints', () => {
               password: '1234567'
             }
             return supertest(app)
-              .post('/api/users')
+              .post('/api/user')
               .send(userShortPassword)
               .expect(400, { error: `Password must be longer than 8 characters` })
         })
@@ -78,7 +78,7 @@ describe( 'Auth Endpoints', () => {
             // console.log(userLongPassword)
             // console.log(userLongPassword.password.length)
             return supertest(app)
-              .post('/api/users')
+              .post('/api/user')
               .send(userLongPassword)
               .expect(400, {
                 error: 'Password must be less than 72 characters'

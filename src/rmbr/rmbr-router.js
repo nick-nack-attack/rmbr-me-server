@@ -45,9 +45,55 @@ rmbrRouter
     .get((req, res) => {
         res.json(RmbrService.serializeRmbr(res.rmbr))
     })
-    .patch((req, res) => {
-         res.json(RmbrService.serializeRmbr(res.rmbr))
+    .delete((req, res, next) => {
+        const { rmbr_id } = req.params;
+        RmbrService
+            .deleteRmbr(
+                req.app.get('db'),
+                rmbr_id
+            )
+            .then(() => {
+                res.status(204)
+                .end()
+            })
+            .catch(next)
+    })
+    .patch(jsonParser, (req, res, next) => {
+        const { rmbr_title, rmbr_text, person_id, user_id } = req.body;
+        const rmbrToUpdate = { rmbr_title, rmbr_text, person_id, user_id };
+        const numOfValues = Object.values(rmbrToUpdate).filter(Boolean).length
+        if (numOfValues===0) {return res.status(400).json({error: {message: `Request body content requires 'title', 'person id', and 'user id'`}})}
+         RmbrService.updateRmbr(
+             req.app.get('db'),
+             req.params.rmbr_id,
+             rmbrToUpdate
+         )
+             .then(() => {
+                 RmbrService.getAllRmbrs(req.app.get('db'))
+                     .then(rbr => {
+                         res
+                             .json(rbr.map(RmbrService.serializeRmbr))
+                             .status(204)
+                             .end()
+                     })
+                     .catch(next)
+             })
      })
+
+rmbrRouter
+    .route('/user/:user_id')
+    // .all(requireAuth)
+    // .all(checkRmbrExists)
+    .get((req, res, next) => {
+        RmbrService.getByUserId(
+            req.app.get('db'),
+            req.params.user_id
+        )
+        .then(rbr => {
+            res.json(rbr.map(RmbrService.serializeRmbr))
+        })
+        .catch(next)
+    })
 
 async function checkRmbrExists(req, res, next) {
     try {

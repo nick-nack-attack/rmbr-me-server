@@ -2,10 +2,10 @@ const app = require('../src/app');
 const knex = require('knex');
 const helpers = require('./test-helpers')
 
-describe('Protected endpoints', () => {
+describe('protected endpoint', () => {
     let db;
     // create db schema as JS objects
-    const { testUsers, testPeople, testRmbrs } = helpers.makeFixtures();
+    const { testUserArray, testPersonArray, testRmbrArray } = helpers.makeFixtures();
 
     before('connect to db', () => {
         db = knex({
@@ -21,68 +21,68 @@ describe('Protected endpoints', () => {
     beforeEach('seed db', () => 
         helpers.seedTables(
             db,
-          testUsers,
-          testPeople,
-          testRmbrs,
-        ), console.log(testRmbrs)
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
+        )
     );
 
-    const protectedEndpoints = [
+    const protectedEndpointArray = [
         {
-            name: `GET /api/people`,
-            path: `/api/people`,
+            name: `GET /api/person`,
+            path: `/api/person`,
             method: supertest(app).get
         },
         {
-            name: `POST /api/people`,
-            path: `/api/people`,
+            name: `POST /api/person`,
+            path: `/api/person`,
             method: supertest(app).get
         },
         {
-            name: `GET /api/people/:person_id`,
-            path: `/api/people/:person_id`,
+            name: `GET /api/person/:person_id`,
+            path: `/api/person/:person_id`,
             method: supertest(app).get
         },
         {
-            name: `PATCH /api/people/:person_id`,
-            path: `/api/people/:person_id`,
+            name: `PATCH /api/person/:person_id`,
+            path: `/api/person/:person_id`,
             method: supertest(app).get
         },
         {
-            name: `DELETE /api/people/:person_id`,
-            path: `/api/people/:person_id`,
+            name: `DELETE /api/person/:person_id`,
+            path: `/api/person/:person_id`,
             method: supertest(app).get
         },
         {
-            name: `GET /api/rmbrs`,
-            path: `/api/rmbrs`,
+            name: `GET /api/rmbr`,
+            path: `/api/rmbr`,
             method: supertest(app).get
         },
         {
-            name: `POST /api/rmbrs`,
-            path: `/api/rmbrs`,
+            name: `POST /api/rmbr`,
+            path: `/api/rmbr`,
             method: supertest(app).get
         },
         {
-            name: `GET /api/rmbrs/:rmbr_id`,
-            path: `/api/rmbrs/:rmbr_id`,
+            name: `GET /api/rmbr/:rmbr_id`,
+            path: `/api/rmbr/:rmbr_id`,
             method: supertest(app).get
         },
         {
-            name: `PATCH /api/rmbrs/:rmbr_id`,
-            path: `/api/rmbrs/:rmbr_id`,
+            name: `PATCH /api/rmbr/:rmbr_id`,
+            path: `/api/rmbr/:rmbr_id`,
             method: supertest(app).get
         },
         {
-            name: `DELETE /api/rmbrs/:rmbr_id`,
-            path: `/api/rmbrs/:rmbr_id`,
+            name: `DELETE /api/rmbr/:rmbr_id`,
+            path: `/api/rmbr/:rmbr_id`,
             method: supertest(app).get
         }
     ];
 
-    protectedEndpoints.forEach(endpoint => {
+    protectedEndpointArray.forEach(endpoint => {
 
-        describe(endpoint.name, () => {
+        describe('endpoint.name', () => {
 
             it(`responds 401 'Missing bearer token' when no bearer token`, () => {
                 return endpoint.method(endpoint.path)
@@ -92,7 +92,7 @@ describe('Protected endpoints', () => {
             });
 
             it(`responds 401 'Unauthorized request' when invalid JWT secret`, () => {
-                const validUser = testUsers[0];
+                const validUser = testUserArray[0];
                 const invalidSecret = 'bad-secret';
                 return endpoint.method(endpoint.path)
                     .set('Authorization', helpers.makeAuthHeader(validUser, invalidSecret))

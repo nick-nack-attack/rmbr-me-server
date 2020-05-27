@@ -2,13 +2,13 @@ const app = require('../src/app');
 const knex = require('knex');
 const helpers = require('./test-helpers');
 
-describe(`Tasks Endpoints`, () => {
+describe(`Tasks Endpoint`, () => {
     let db;
     // create db schema as JS objects
     const {
-        testUsers,
-        testPeople,
-        testRmbrs
+        testUserArray,
+        testPersonArray,
+        testRmbrArray
     } = helpers.makeFixtures();
 
     before('connect to db', () => {
@@ -23,60 +23,60 @@ describe(`Tasks Endpoints`, () => {
     before(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
     afterEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
 
-    describe(`GET /api/rmbrs`, () => {
+    describe(`GET /api/rmbr`, () => {
         
-        context(`given no rmbrs`, () => {
+        context(`empty rmbr table`, () => {
 
             beforeEach('seed db', () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
-                    testRmbrs
+                    testUserArray,
+                    testPersonArray,
+                    testRmbrArray
                   )
                 );
             });
 
-            it(`responds 200 with empty array`, () => {
+            it(`responds with 200 and empty array`, () => {
                 return (
                     supertest(app)
-                        .get(`/api/rmbrs`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .get(`/api/rmbr`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .expect(200, [])
                 );
             });
 
         })
 
-        context(`given there ARE rmbrs`, () => {
+        context(`given there is one rmbr (or more)`, () => {
 
             beforeEach('seed db', () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
-                    testRmbrs
+                    testUserArray,
+                    testPersonArray,
+                    testRmbrArray
                   )
                 );
             });
 
-            it(`responds with 200 with an array of people`, () => {
-                const expectedRmbrs =
-                    testRmbrs
-                        .filter(rbr => rbr.user_id === testUsers[0].id)
+            it(`responds with 200 and a rmbr array`, () => {
+                const expectedRmbrArray =
+                    testRmbrArray
+                        .filter(rbr => rbr.user_id === testUserArray[0].id)
                         .map(tsk => {
                             return (
-                                helpers.makeExpectedPersonRmbr(tsk)
+                                helpers.makeExpectedRmbr(tsk)
                             );
                         });
 
                 return (
                     supertest(app)
-                        .get(`/api/rmbrs`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-                        .expect(200, expectedRmbrs)
+                        .get(`/api/rmbr`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
+                        .expect(200, expectedRmbrArray)
                 );
             });
 
@@ -84,17 +84,17 @@ describe(`Tasks Endpoints`, () => {
 
     });
 
-    describe(`GET /api/rmbrs/:rmbr_id`, () => {
+    describe(`GET /api/rmbr/:rmbr_id`, () => {
 
-        context(`given no rmbrs`, () => {
+        context(`empty rmbr table in database`, () => {
 
             beforeEach('seed db', () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
-                    testRmbrs
+                    testUserArray,
+                    testPersonArray,
+                    testRmbrArray
                   )
                 );
             });
@@ -102,8 +102,8 @@ describe(`Tasks Endpoints`, () => {
             it(`responds with 404`, () => {
                 return (
                     supertest(app)
-                        .get(`/api/rmbrs/1000`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .get(`/api/rmbr/1000`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .expect(404, {
                             error: `Rmbr doesn't exist`
                         })
@@ -112,26 +112,26 @@ describe(`Tasks Endpoints`, () => {
 
         });
 
-        context(`given there ARE rmbrs`, () => {
+        context(`given there is one rmbr (or more)`, () => {
 
             beforeEach('seed db', () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
-                    testRmbrs
+                    testUserArray,
+                    testPersonArray,
+                    testRmbrArray
                   )
                 );
             });
 
             it(`responds 200 and specified rmbr`, () => {
-                const rmbrId = 1;
-                const expectedRmbr = makeExpectedPersonRmbr(testRmbrs[rmbrId - 1]);
+                const rmbr_id = 1;
+                const expectedRmbr = makeExpectedRmbr(testRmbrArray[rmbr_id - 1]);
                 return (
                     supertest(app)
-                        .get(`/api/rmbrs/${rmbrId}`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .get(`/api/rmbr/${rmbr_id}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .expect(200, expectedRmbr)
                 );
             });
@@ -148,8 +148,8 @@ describe(`Tasks Endpoints`, () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
+                    testUserArray,
+                    testPersonArray,
                     [] //testRmbrs
                   )
                 );
@@ -157,7 +157,7 @@ describe(`Tasks Endpoints`, () => {
 
             it(`responds 201 and new rmbr`, function() {
                 this.retries(3);
-                const testUser = testUsers[0];
+                const testUser = testUserArray[0];
                 const newRmbr = {
                     rmbr_title: 'rmbr title',
                     person_id: 1,
@@ -165,15 +165,15 @@ describe(`Tasks Endpoints`, () => {
                 };
                 return (
                     supertest(app)
-                        .post(`/api/rmbrs`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .post(`/api/rmbr`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .send(newRmbr)
                         .expect(201)
                         .expect(res => {
                             expect(res.body).to.have.property('id');
                             expect(res.body.title).to.eql(newRmbr.title);
                             expect(res.body.user_id).to.eql(testUser.id)
-                            expect(res.headers.location).to.eql(`/api/rmbrs/${res.body.id}`);
+                            expect(res.headers.location).to.eql(`/api/rmbr/${res.body.id}`);
                             const expectedCreatedDate = new Date().toLocaleString();
                             const actualCreatedDate = new Date(res.body.date_created).toLocaleString();
                             expect(expectedCreatedDate).to.eql(actualCreatedDate);
@@ -185,7 +185,7 @@ describe(`Tasks Endpoints`, () => {
 
     });
 
-    describe(`DELETE /api/rmbrs/:rmbr_id`, () => {
+    describe(`DELETE /api/rmbr/:rmbr_id`, () => {
 
         context(`given rmbr does NOT exist`, () => {
 
@@ -193,19 +193,19 @@ describe(`Tasks Endpoints`, () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
+                    testUserArray,
+                    testPersonArray,
                     [] //testRmbrs
                   )
                 );
             });
 
             it(`responds 404`, () => {
-                const rmbrId = 1000;
+                const rmbr_id = 1000;
                 return (
                     supertest(app)
-                        .delete(`/api/rmbrs/${rmbrId}`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .delete(`/api/rmbr/${rmbr_id}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .expect(404, {
                             error: `Rmbr doesn't exist`
                         })
@@ -219,26 +219,26 @@ describe(`Tasks Endpoints`, () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
-                    testRmbrs
+                    testUserArray,
+                    testPersonArray,
+                    testRmbrArray
                   )
                 );
             });
 
             it(`responds 204 and rmbr is deleted`, () => {
-                const rmbrId = 1;
+                const rmbr_id = 1;
                 return (
                     supertest(app)
-                        .delete(`/api/rmbrs/${rmbrId}`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .delete(`/api/rmbr/${rmbr_id}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .expect(204)
                         .then(() => {
                             // verify that 404 is received
                             return (
                                 supertest(app)
-                                    .get(`/api/rmbrs/${rmbrId}`)
-                                    .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                                    .get(`/api/rmbr/${rmbr_id}`)
+                                    .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                                     .expect(404)
                             );
                         })
@@ -249,7 +249,7 @@ describe(`Tasks Endpoints`, () => {
 
     })
 
-    describe(`PATCH /api/rmbrs/:rmbr_id`, () => {
+    describe(`PATCH /api/rmbr/:rmbr_id`, () => {
 
         context(`given rmbrs DO NOT exist`, () => {
 
@@ -257,22 +257,22 @@ describe(`Tasks Endpoints`, () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
+                    testUserArray,
+                    testPersonArray,
                     [] //testRmbrs
                   )
                 );
             });
 
             it(`responds 404`, () => {
-                const rmbrId = 1000;
+                const rmbr_id = 1000;
                 const updatedRmbr = {
                     rmbr_title: 'NEW RMBR TITLE'
                 };
                 return (
                     supertest(app)
-                        .patch(`/api/rmbrs/${rmbrId}`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .patch(`/api/rmbr/${rmbr_id}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .send(updatedRmbr)
                         .expect(404, {
                             error: `Rmbr doesn't exist`
@@ -288,30 +288,30 @@ describe(`Tasks Endpoints`, () => {
                 return (
                   helpers.seedTables(
                     db,
-                    testUsers,
-                    testPeople,
-                    testRmbrs
+                    testUserArray,
+                    testPersonArray,
+                    testRmbrArray
                   )
                 );
             });
 
             it(`responds 201 and rmbr is updated`, function() {
                 this.retries(3);
-                const rmbrId = 1;
+                const rmbr_id = 1;
                 const updatedRmbr = {
                     rmbr_title: 'NEW RMBR TITLE!!'
                 };
                 const expectedRmbr = {
-                    ...testRmbrs[rmbrId - 1],
+                    ...testRmbrArray[rmbr_id - 1],
                     ...updatedRmbr,
                     date_modified: new Date().toLocaleString(),
-                    date_created: new Date(testRmbrs[rmbrId - 1].date_created).toLocaleString()
+                    date_created: new Date(testRmbrArray[rmbr_id - 1].date_created).toLocaleString()
                 };
 
                 return (
                     supertest(app)
-                        .patch(`/api/rmbrs/${rmbrId}`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .patch(`/api/rmbr/${rmbr_id}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .expect(200)
                         .expect(res => {
                             const actualDateCreated = new Date(res.body.date_created).toLocaleString();

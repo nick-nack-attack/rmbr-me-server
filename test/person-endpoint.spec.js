@@ -1,16 +1,18 @@
+import {makeExpectedPerson} from "./test-helpers";
+
 const app = require('../src/app')
 const knex = require('knex')
 const helpers = require('./test-helpers')
 
-describe('People Endpoints', () => {
+describe('Person Endpoint', () => {
 
   let db;
 
   // create db schema as JS objects
   const {
-    testUsers,
-    testPeople,
-    testRmbrs,
+    testUserArray,
+    testPersonArray,
+    testRmbrArray,
   } = helpers.makeFixtures();
 
   before('make knex instance', () => {
@@ -25,17 +27,17 @@ describe('People Endpoints', () => {
   before(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
   afterEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
 
-  describe(`GET /api/people`, () => {
+  describe(`GET /api/person`, () => {
 
-    context(`Given no people`, () => {
+    context(`empty person table in database`, () => {
 
       beforeEach('seed db', () => {
         return (
           helpers.seedTables(
             db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
           )
         );
       });
@@ -43,29 +45,29 @@ describe('People Endpoints', () => {
       it(`responds 200 and an empty array`, () => {
         return (
           supertest(app)
-            .get('/api/people')
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .get('/api/person')
+            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .expect(200, [])
         );
       });
 
     });
 
-    context(`Given there ARE people`, () => {
+    context(`Given there is one person (or more)`, () => {
 
       beforeEach('seed db', () =>
         helpers.seedTables(
           db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
         )
       );
 
-      it(`responds 200 and all people`, () => {
-        const expectedPeople = 
-          testPeople
-          .filter(person => person.user_id === testUsers[0].id)
+      it(`responds 200 and all person(s)`, () => {
+        const expectedPersonArray =
+          testPersonArray
+          .filter(person => person.user_id === testUserArray[0].id)
           .map(person => {
             return (
               helpers.makeExpectedPerson(person)
@@ -73,9 +75,9 @@ describe('People Endpoints', () => {
           });
           return (
             supertest(app)
-              .get('/api/people')
-              .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-              .expect(200, expectedPeople)
+              .get('/api/person')
+              .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
+              .expect(200, expectedPersonArray)
           ); 
       });
       
@@ -83,24 +85,24 @@ describe('People Endpoints', () => {
 
   });
 
-  describe(`GET /api/people/:person_id`, () => {
+  describe(`GET /api/person/:person_id`, () => {
 
-    context(`Given no people`, () => {
+    context(`empty person table in database`, () => {
 
       beforeEach('seed db', () => 
         helpers.seedTables(
           db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
         )
       );
 
       it(`responds with 404`, () => {
         return (
           supertest(app)
-            .get(`/api/people/1`)
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .get(`/api/person/1`)
+            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .expect(404, {
               error: `Person doesn't exist`
             })
@@ -109,63 +111,63 @@ describe('People Endpoints', () => {
 
     });
 
-    context('Given there ARE people', () => {
+    context('Given there is one person (or more)', () => {
 
       beforeEach('seed database', () =>
         helpers.seedTables(
           db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
         )
       );
 
       it('responds 200 and specified person', () => {
-        const personId = 1
-        const expectedPerson = makeExpectedPerson(testPeople[personId - 1]);
+        const person_id = 1
+        const expectedPerson = makeExpectedPerson(testPersonArray[person_id - 1]);
         return (
           supertest(app)
-            .get(`/api/people/${personId}`)
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .get(`/api/person/${person_id}`)
+            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .expect(200, expectedPerson)
         );  
       });
     });
   });
 
-  describe(`POST /api/people`, () => {
+  describe(`POST /api/person`, () => {
     
-    context(`Given no people`, () => {
+    context(`empty person table in database`, () => {
 
       beforeEach('seed db', () => {
         return (
           helpers.seedTables(
             db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
           )
         );
       });
 
       it(`responds 201 and new person`, () => {
         this.retries(3);
-        const testUser = testUsers[0];
+        const testUser = testUserArray[0];
         const newPerson = {
           person_name: 'Test Person',
           user_id: 1
         };
         return (
           supertest(app)
-            .post(`/api/people`)
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .post(`/api/person`)
+            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .send(newPerson)
             .expect(201)
             .expect(res => {
               expect(res.body).to.have.property('id');
               expect(res.body.person_name).to.eql(newPerson.person_name);
               expect(res.body.user_id).to.eql(testUser.id);
-              expect(res.headers.location).to.eql(`/api/people/${res.body.id}`);
+              expect(res.headers.location).to.eql(`/api/person/${res.body.id}`);
               const expectedDateCreated = new Date().toLocaleString();
               const actualDateCreated = new Date(res.body.date_created).toLocaleString();
               expect(expectedDateCreated).to.eql(actualDateCreated);
@@ -175,27 +177,27 @@ describe('People Endpoints', () => {
     });
   });
 
-  describe(`DELETE /api/people/:person_id`, () => {
+  describe(`DELETE /api/person/:person_id`, () => {
 
-    context(`Given person does not exist`, () => {
+    context(`empty person table in database`, () => {
 
       beforeEach('seed db', () => {
         return (
           helpers.seedTables(
             db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
           )
         );
       });
 
       it(`responds 404`, () => {
-        const personId = 1000;
+        const person_id = 1000;
         return (
           supertest(app)
-            .delete(`/api/people/${personId}`)
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .delete(`/api/person/${person_id}`)
+            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .expect(404, {
               error: `Person doesn't exist`
             })
@@ -209,26 +211,26 @@ describe('People Endpoints', () => {
       return (
         helpers.seedTables(
           db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
         )
       );
     });
 
     it(`responds 204 and person is deleted`, () => {
-      const personId = 1;
+      const person_id = 1;
       return (
         supertest(app)
-          .delete(`/api/people/${personId}`)
-          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .delete(`/api/person/${person_id}`)
+          .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
           .expect(204)
           .then(() => {
             // verify we receive 404 when querying person
             return (
               supertest(app)
-                .get(`/api/person/${personId}`)
-                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                .get(`/api/person/${person_id}`)
+                .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                 .expect(404)
             );
           })
@@ -237,7 +239,7 @@ describe('People Endpoints', () => {
   });
   });
 
-  describe(`PATCH /api/people/:person_id`, () => {
+  describe(`PATCH /api/person/:person_id`, () => {
 
     context(`given person does NOT exist`, () => {
 
@@ -245,22 +247,22 @@ describe('People Endpoints', () => {
         return (
           helpers.seedTables(
             db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
           )
         );
       });
 
       it(`responds 404`, () => {
-        const personId = 1000;
+        const person_id = 1000;
         const updatedPerson = {
           person_name: 'This is a New Name'
         };
         return (
           supertest(app)
-            .patch(`/api/people/${personId}`)
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .patch(`/api/person/${person_id}`)
+            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .send(updatedPerson)
             .expect(404, {
               error: `Person doesn't exist`
@@ -275,45 +277,45 @@ describe('People Endpoints', () => {
         return (
           helpers.seedTables(
             db,
-          testUsers,
-          testPeople,
-          testRmbrs,
+          testUserArray,
+          testPersonArray,
+          testRmbrArray,
           )
         );
       });
 
       it(`responds 200 and person is updated`, () => {
         this.retries(3);
-        const personId = 1;
+        const person_id = 1;
         const updatedPerson = {
           person_name: 'NEW NAME!'
         };
 
         const expectedPerson = {
-          ...testPeople[personId - 1],
+          ...testPersonArray[person_id - 1],
           ...updatedPerson,
           date_modified: new Date().toLocaleString(),
-          date_created: new Date(testPeople[personId - 1].date_created).toLocaleString()
+          date_created: new Date(testPersonArray[person_id - 1].date_created).toLocaleString()
         };
 
         return (
           supertest(app)
-            .patch(`/api/people/${personId}`)
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .patch(`/api/person/${person_id}`)
+            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .send(updatedPerson)
             .expect(201)
             .then(res => {
               return (
                 supertest(app)
-                  .get(`/api/people/${personId}`)
-                  .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                  .get(`/api/person/${person_id}`)
+                  .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                   .send(updatedPerson)
                   .expect(201)
                   .then(res => {
                     return (
                       supertest(app)
-                        .get(`/api/people/${personId}`)
-                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .get(`/api/person/${person_id}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                         .expect(200)
                         .expect(res => {
                           const actualDateModified = new Date(res.body.date_modified).toLocaleString();

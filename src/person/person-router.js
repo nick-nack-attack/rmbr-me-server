@@ -1,4 +1,4 @@
-const express = require('./node_modules/express')
+const express = require('../../node_modules/express');
 const PersonService = require('./person-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 
@@ -9,7 +9,7 @@ personRouter
     .route('/')
     // .all(requireAuth)
     .get((req, res, next) => {
-        PersonService.getAllPeople(req.app.get('db'))
+        PersonService.getAllPersons(req.app.get('db'))
             .then(people => {
                 res.json(people.map(PersonService.serializePerson))
             })
@@ -30,20 +30,19 @@ personRouter
             .then(person => {
                 res
                 .status(201)
-                .location(`/api/people/${person.id}`)
-                    // .location(path.posix.join(req.originalUrl, `/${person.id}`))
-                    .json(PersonService.serializePerson(person))
+                .location(`/api/person/${person.id}`)
+                .json(person)
             })
             .catch(next)
     })
 
 personRouter
-    .route('/users/:user_id')
+    .route('/user/:user_id')
     // .all(requireAuth)
     // .all(checkPersonExists)
     .get((req, res, next) => {
         const { user_id } = req.params;
-        PersonService.getPeoplebyUserId(req.app.get('db'), user_id)
+        PersonService.getPersonByUserId(req.app.get('db'), user_id)
           .then((person) => {
             res.json(person);
           })
@@ -51,16 +50,16 @@ personRouter
       });
 
 personRouter
-    .route('/:person_id/rmbrs')
+    .route('/:person_id/rmbr')
     // .all(requireAuth)
     // .all(checkPersonExists)
     .get((req, res, next) => {
-        PersonService.getRmbrsForPerson(
+        PersonService.getRmbrByPersonId(
             req.app.get('db'),
             req.params.person_id
         )
         .then(rmbrs => {
-            res.json(rmbrs.map(PersonService.serializePersonRmbr))
+            res.json(rmbrs.map(PersonService.serializeRmbr))
         })
         .catch(next)
     });
@@ -69,7 +68,7 @@ personRouter
     .route('/:person_id')
     .get((req, res, next) => {
         const { person_id } = req.params;
-        PersonService.getbyId(
+        PersonService.getPersonById(
             req.app.get('db'),
             person_id
         )
@@ -78,11 +77,42 @@ personRouter
         })
         .catch(next)
     })
+    .delete((req, res, next) => {
+        const { person_id } = req.params;
+        PersonService
+            .deletePerson(
+                req.app.get('db'),
+                person_id
+            )
+            .then(() => {
+                res.status(204)
+                    .end()
+            })
+            .catch(next)
+    })
+    .patch(jsonParser, (req, res, next) => {
+        const { person_name, user_id, type_of_person } = req.body;
+        const personToUpdate = { person_name, user_id, type_of_person };
+        const numOfValues = Object.values(personToUpdate).filter(Boolean).length;
+        if (numOfValues===0) {return res.status(400).json({error: {message: `Request body content requires 'title', 'person id', and 'user id'`}})};
+        PersonService.updatePerson(
+            req.app.get('db'),
+            req.params.person_id,
+            personToUpdate
+        )
+            .then(person => {
+                res
+                    .json(person)
+                    .status(204)
+                    .end()
+            })
+            .catch(next)
+    });
 
 // Wait for promises, yo.
 // async function checkPersonExists(req, res, next) {
 //     try {
-//         const person = await PersonService.getPeoplebyUserId(
+//         const person = await PersonService.getPeoplebyuser_id(
 //             req.app.get('db'),
 //             req.params.user_id
 //         )

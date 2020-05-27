@@ -1,8 +1,8 @@
-const xss = require('./node_modules/xss')
+const xss = require('../../node_modules/xss')
 
 const PersonService = {
 
-    getAllPeople(db) {
+    getAllPersons(db) {
         return db
             .from('rmbrme_people AS ppl')
             .select(
@@ -40,13 +40,14 @@ const PersonService = {
 
     },
 
-    getbyId(db, id) {
-        return PersonService.getAllPeople(db)
+    getPersonById(db, id) {
+        return PersonService.getAllPersons(db)
             .where('ppl.id', id)
             .first()
     },
-    getPeoplebyUserId(db, user_id) {
-        return PersonService.getAllPeople(db)
+
+    getPersonByUserId(db, user_id) {
+        return PersonService.getAllPersons(db)
             .where('usr.id', user_id)
     },
 
@@ -55,23 +56,30 @@ const PersonService = {
           .insert(newPerson)
           .into('rmbrme_people')
           .returning('*')
-          .then(([person]) => person);
+          .then(([person]) => person)
+            .then(person =>
+                PersonService.getPersonById(db, person.id)
+            )
       },
-    // insertPerson(db, newPerson) {
-    //         return db
-    //             .insert(newPerson)
-    //             .into('rmbrme_people')
-    //             .returning('*')
-    //             .then(([returnPerson]) => returnPerson)
-    //             .then(person =>
-    //                 PersonService.getbyId(db, person.id)
-    //         )
-    // },
+
+    deletePerson(db, id) {
+        return db
+            .from('rmbrme_people')
+            .where('id', id)
+            .delete()
+    },
+
+    updatePerson(db, id, fields) {
+        return db
+            .from('rmbrme_people')
+            .where('id', id)
+            .update(fields)
+            .then(res =>
+                PersonService.getPersonById(db, id)
+            )
+    },
 
     serializePerson(person) {
-
-        // const { user } = person
-    
         return {
           id: person.id,
           person_name: xss(person.person_name),
@@ -81,16 +89,10 @@ const PersonService = {
           last_contact: person.last_contact,
           date_created: person.date_created,
           date_modified: person.date_modified,
-        //   user: {
-        //     id: user.id,
-        //     user_name: user.user_name,
-        //     date_created: new Date(user.date_created)
-        //   },
         }  
     },
 
-    serializePersonRmbr(rmbr) {
-
+    serializeRmbr(rmbr) {
         return {
             id: rmbr.id,
             rmbr_title: xss(rmbr.rmbr_title),
@@ -100,7 +102,7 @@ const PersonService = {
         }
     },
 
-    getRmbrsForPerson(db, person_id) {
+    getRmbrByPersonId(db, person_id) {
         return db
             .from('rmbrme_rmbrs')
             .select('*')

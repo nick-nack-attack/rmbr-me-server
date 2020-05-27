@@ -23,8 +23,8 @@ function cleanTables(db) {
     );
 };
 
-// Create dummy users
-function makeUsersArray() {
+// Create dummy user
+function makeUserArray() {
     return [
         {
             id: 1,
@@ -45,7 +45,7 @@ function makeUsersArray() {
 };
 
 // Create dummy people
-function makePeopleArray(users) {
+function makePersonArray(users) {
     return [
         {
             id: 1,
@@ -80,14 +80,14 @@ function makePeopleArray(users) {
     ];
 };
 
-// Create dummy rmbrs
-function makeRmbrsArray(users, people) {
+// Create dummy rmbr
+function makeRmbrArray(users, people) {
     return [
         {
             id: 1,
-            rmbr_title: 'Rmbr 1 Title',
+            rmbr_title: 'RmbrListItem 1 Title',
             category: 'Past',
-            rmbr_text: 'Rmbr 1 Text',
+            rmbr_text: 'RmbrListItem 1 Text',
             person_id: people[0].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[0].id,
@@ -95,9 +95,9 @@ function makeRmbrsArray(users, people) {
         },
         {
             id: 2,
-            rmbr_title: 'Rmbr 2 Title',
+            rmbr_title: 'RmbrListItem 2 Title',
             category: 'Current',
-            rmbr_text: 'Rmbr 2 Text',
+            rmbr_text: 'RmbrListItem 2 Text',
             person_id: people[0].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[0].id,
@@ -105,9 +105,9 @@ function makeRmbrsArray(users, people) {
         },
         {
             id: 3,
-            rmbr_title: 'Rmbr 3 Title',
+            rmbr_title: 'RmbrListItem 3 Title',
             category: 'Past',
-            rmbr_text: 'Rmbr 3 Text',
+            rmbr_text: 'RmbrListItem 3 Text',
             person_id: people[1].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[1].id,
@@ -115,9 +115,9 @@ function makeRmbrsArray(users, people) {
         },
         {
             id: 4,
-            rmbr_title: 'Rmbr 4 Title',
+            rmbr_title: 'RmbrListItem 4 Title',
             category: 'Current',
-            rmbr_text: 'Rmbr 4 Text',
+            rmbr_text: 'RmbrListItem 4 Text',
             person_id: people[1].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[1].id,
@@ -125,9 +125,9 @@ function makeRmbrsArray(users, people) {
         },
         {
             id: 5,
-            rmbr_title: 'Rmbr 5 Title',
+            rmbr_title: 'RmbrListItem 5 Title',
             category: 'Past',
-            rmbr_text: 'Rmbr 5 Text',
+            rmbr_text: 'RmbrListItem 5 Text',
             person_id: people[2].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[2].id,
@@ -135,9 +135,9 @@ function makeRmbrsArray(users, people) {
         },
         {
             id: 6,
-            rmbr_title: 'Rmbr 6 Title',
+            rmbr_title: 'RmbrListItem 6 Title',
             category: 'Past',
-            rmbr_text: 'Rmbr 6 Text',
+            rmbr_text: 'RmbrListItem 6 Text',
             person_id: people[2].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[2].id,
@@ -146,34 +146,34 @@ function makeRmbrsArray(users, people) {
     ];
 };
 
-function seedTables(db, users, people, rmbrs) {
+function seedTables(db, user, person, rmbr) {
     return db.transaction(async trx => {
 
-        if (users.length > 0) {
-            const preppedUsers = users.map(usr => ({
+        if (user.length > 0) {
+            const preppedUserArray = user.map(usr => ({
                 ...usr,
                 password: bcrypt.hashSync(usr.password, 1)
             }));
-            await trx.into('rmbrme_users').insert(preppedUsers);
+            await trx.into('rmbrme_users').insert(preppedUserArray);
             await trx.raw(
                 `SELECT setval('rmbrme_users_id_seq', ?)`,
-                [users[users.length - 1].id]
+                [user[user.length - 1].id]
             );
         };
 
-        if (people.length > 0) {
-            await trx.into('rmbrme_people').insert(people);
+        if (person.length > 0) {
+            await trx.into('rmbrme_people').insert(person);
             await trx.raw(
                 `SELECT setval('rmbrme_people_id_seq', ?)`,
-                [people[people.length - 1].id]
+                [person[person.length - 1].id]
             );
         };
 
-        if (rmbrs.length > 0) {
-            await trx.into('rmbrme_rmbrs').insert(rmbrs);
+        if (rmbr.length > 0) {
+            await trx.into('rmbrme_rmbrs').insert(rmbr);
             await trx.raw(
                 `SELECT setval ('rmbrme_rmbrs_id_seq', ?)`,
-                [rmbrs[rmbrs.length - 1].id]
+                [rmbr[rmbr.length - 1].id]
             );
         };
 
@@ -195,7 +195,7 @@ function makeExpectedPerson(person) {
 
 }
 
-function makeExpectedPersonRmbr(rmbr) {
+function makeExpectedRmbr(rmbr) {
 
     return {
         id: rmbr.id,
@@ -223,7 +223,7 @@ function makeMaliciousRmbr(person) {
     }
 
     const expectedRmbr = {
-        ...makeExpectedPersonRmbr([user], maliciousRmbr),
+        ...makeExpectedRmbr([user], maliciousRmbr),
         rmbr_title: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
         rmbr_text: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
     }
@@ -234,13 +234,13 @@ function makeMaliciousRmbr(person) {
 };
 
 function makeFixtures() {
-    const testUsers = makeUsersArray();
-    const testPeople = makePeopleArray(testUsers);
-    const testRmbrs = makeRmbrsArray(testUsers, testPeople);
-    console.log(testUsers)
-    console.log(testPeople)
-    console.log(testRmbrs)
-    return { testUsers, testPeople, testRmbrs };
+    const testUserArray = makeUserArray();
+    const testPersonArray = makePersonArray(testUserArray);
+    const testRmbrArray = makeRmbrArray(testUserArray, testPersonArray);
+    console.log(testUserArray)
+    console.log(testPersonArray)
+    console.log(testRmbrArray)
+    return { testUserArray: testUserArray, testPersonArray: testPersonArray, testRmbrArray: testRmbrArray };
 };
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
@@ -261,10 +261,10 @@ module.exports = {
     makeFixtures,
     cleanTables,
     seedTables,
-    makeUsersArray,
-    makePeopleArray,
-    makeRmbrsArray,
+    makeUserArray,
+    makePersonArray,
+    makeRmbrArray,
     makeExpectedPerson,
-    makeExpectedPersonRmbr,
+    makeExpectedRmbr,
     makeMaliciousRmbr,
 };
