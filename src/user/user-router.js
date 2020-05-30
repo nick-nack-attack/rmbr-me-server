@@ -12,18 +12,14 @@ userRouter
 
     for (const field of ['user_name', 'password'])
       if (!req.body[field])
-        return res.status(400).json({
-          error: `Missing '${field}' in request body`
-        })
+        return res.status(400).json({ error: `Missing '${field}' in request body` })
 
     // TODO: check user_name doesn't start with spaces
 
     const passwordError = UserService.validatePassword(password)
 
     if (passwordError)
-      return res.status(400).json({
-        error: passwordError
-      })
+      return res.status(400).json({ error: passwordError })
 
     UserService.hasUserWithUserName(
         req.app.get('db'),
@@ -31,9 +27,7 @@ userRouter
       )
       .then(hasUserWithUserName => {
         if (hasUserWithUserName)
-          return res.status(400).json({
-            error: `Username already taken`
-          })
+          return res.status(400).json({ error: `Username already taken` })
 
         return UserService.hashPassword(password)
           .then(hashedPassword => {
@@ -42,14 +36,12 @@ userRouter
               password: hashedPassword,
               date_created: 'now()',
             }
-
             return UserService.insertUser(
                 req.app.get('db'),
                 newUser
               )
               .then(user => {
-                res
-                  .status(201)
+                res.status(201)
                   .location(path.posix.join(req.originalUrl, `/${user.id}`))
                   .json(UserService.serializeUser(user))
               })

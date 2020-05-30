@@ -15,15 +15,15 @@ describe('protected endpoint', () => {
         app.set('db', db);
     });
     after(`disconnect from database`, () => { db.destroy() });
-    before(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
+    beforeEach(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
     afterEach(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
 
     beforeEach('seed db', () => 
         helpers.seedTables(
             db,
-          testUserArray,
-          testPersonArray,
-          testRmbrArray,
+            testUserArray,
+            testPersonArray,
+            testRmbrArray,
         )
     );
 
@@ -31,52 +31,52 @@ describe('protected endpoint', () => {
         {
             name: `GET /api/person`,
             path: `/api/person`,
-            method: supertest(app).get
+            method: supertest(app).get,
         },
         {
             name: `POST /api/person`,
             path: `/api/person`,
-            method: supertest(app).get
+            method: supertest(app).get,
         },
         {
             name: `GET /api/person/:person_id`,
-            path: `/api/person/:person_id`,
-            method: supertest(app).get
+            path: `/api/person/1`,
+            method: supertest(app).get,
         },
         {
             name: `PATCH /api/person/:person_id`,
-            path: `/api/person/:person_id`,
-            method: supertest(app).get
+            path: `/api/person/1`,
+            method: supertest(app).get,
         },
         {
             name: `DELETE /api/person/:person_id`,
-            path: `/api/person/:person_id`,
-            method: supertest(app).get
+            path: `/api/person/1`,
+            method: supertest(app).get,
         },
         {
             name: `GET /api/rmbr`,
             path: `/api/rmbr`,
-            method: supertest(app).get
+            method: supertest(app).get,
         },
         {
             name: `POST /api/rmbr`,
             path: `/api/rmbr`,
-            method: supertest(app).get
+            method: supertest(app).get,
         },
         {
             name: `GET /api/rmbr/:rmbr_id`,
-            path: `/api/rmbr/:rmbr_id`,
-            method: supertest(app).get
+            path: `/api/rmbr/1`,
+            method: supertest(app).get,
         },
         {
             name: `PATCH /api/rmbr/:rmbr_id`,
-            path: `/api/rmbr/:rmbr_id`,
-            method: supertest(app).get
+            path: `/api/rmbr/1`,
+            method: supertest(app).get,
         },
         {
             name: `DELETE /api/rmbr/:rmbr_id`,
-            path: `/api/rmbr/:rmbr_id`,
-            method: supertest(app).get
+            path: `/api/rmbr/1`,
+            method: supertest(app).get,
         }
     ];
 
@@ -84,10 +84,10 @@ describe('protected endpoint', () => {
 
         describe('endpoint.name', () => {
 
-            it(`responds 401 'Missing bearer token' when no bearer token`, () => {
+            it(`responds 401 'Missing bearer token' when no bearer token on endpoint ${endpoint.name}`, () => {
                 return endpoint.method(endpoint.path)
                     .expect(401, {
-                        error: `Missing bearer token` 
+                        error: `Missing bearer token`
                     });
             });
 

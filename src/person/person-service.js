@@ -4,51 +4,19 @@ const PersonService = {
 
     getAllPersons(db) {
         return db
-            .from('rmbrme_people AS ppl')
-            .select(
-            'ppl.id',
-            'ppl.person_name',
-            'ppl.type_of_person',
-            'ppl.first_met',
-            'ppl.last_contact',
-            'ppl.date_created',
-            'ppl.date_modified',
-            db.raw(
-                `count(DISTINCT rbr) AS number_of_rmbrs`
-            ),
-            db.raw(
-                `json_strip_nulls(
-                    json_build_object(
-                        'id', usr.id,
-                        'user_name', usr.user_name,
-                        'date_created', usr.date_created
-                    )
-                ) AS "user"`
-            ),
-        )
-        .leftJoin(
-            'rmbrme_rmbrs AS rbr',
-            'ppl.id',
-            'rbr.person_id',
-            )
-        .leftJoin(
-            'rmbrme_users AS usr',
-            'ppl.user_id',
-            'usr.id'
-        )
-        .groupBy('ppl.id', 'usr.id')
-
+            .from('rmbrme_people')
+            .select('*')
     },
 
     getPersonById(db, id) {
         return PersonService.getAllPersons(db)
-            .where('ppl.id', id)
+            .where('id', id)
             .first()
     },
 
     getPersonByUserId(db, user_id) {
         return PersonService.getAllPersons(db)
-            .where('usr.id', user_id)
+            .where('user_id', user_id)
     },
 
     insertPerson(db, newPerson) {

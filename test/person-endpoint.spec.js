@@ -1,5 +1,3 @@
-import {makeExpectedPerson} from "./test-helpers";
-
 const app = require('../src/app')
 const knex = require('knex')
 const helpers = require('./test-helpers')
@@ -24,7 +22,7 @@ describe('Person Endpoint', () => {
   })
 
   after(`disconnect from database`, () => { return db.destroy() });
-  before(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
+  beforeEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
   afterEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
 
   describe(`GET /api/person`, () => {
@@ -36,8 +34,8 @@ describe('Person Endpoint', () => {
           helpers.seedTables(
             db,
           testUserArray,
-          testPersonArray,
-          testRmbrArray,
+          [],
+          [],
           )
         );
       });
@@ -60,15 +58,13 @@ describe('Person Endpoint', () => {
           db,
           testUserArray,
           testPersonArray,
-          testRmbrArray,
+          [],
         )
       );
 
       it(`responds 200 and all person(s)`, () => {
         const expectedPersonArray =
-          testPersonArray
-          .filter(person => person.user_id === testUserArray[0].id)
-          .map(person => {
+          testPersonArray.map(person => {
             return (
               helpers.makeExpectedPerson(person)
             );
@@ -78,9 +74,8 @@ describe('Person Endpoint', () => {
               .get('/api/person')
               .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
               .expect(200, expectedPersonArray)
-          ); 
+          );
       });
-      
     });
 
   });
@@ -93,8 +88,8 @@ describe('Person Endpoint', () => {
         helpers.seedTables(
           db,
           testUserArray,
-          testPersonArray,
-          testRmbrArray,
+          [],
+          [],
         )
       );
 
@@ -124,7 +119,7 @@ describe('Person Endpoint', () => {
 
       it('responds 200 and specified person', () => {
         const person_id = 1
-        const expectedPerson = makeExpectedPerson(testPersonArray[person_id - 1]);
+        const expectedPerson = helpers.makeExpectedPerson(testPersonArray[person_id - 1]);
         return (
           supertest(app)
             .get(`/api/person/${person_id}`)
@@ -143,24 +138,25 @@ describe('Person Endpoint', () => {
         return (
           helpers.seedTables(
             db,
-          testUserArray,
-          testPersonArray,
-          testRmbrArray,
+            testUserArray,
+            [],
+            [],
           )
         );
       });
 
-      it(`responds 201 and new person`, () => {
+      it(`responds 201 and new person`, function() {
         this.retries(3);
         const testUser = testUserArray[0];
         const newPerson = {
           person_name: 'Test Person',
-          user_id: 1
+          type_of_person: 'Friend',
+          user_id: testUser.id
         };
         return (
           supertest(app)
             .post(`/api/person`)
-            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
+            .set('Authorization', helpers.makeAuthHeader(testUser))
             .send(newPerson)
             .expect(201)
             .expect(res => {
@@ -172,7 +168,7 @@ describe('Person Endpoint', () => {
               const actualDateCreated = new Date(res.body.date_created).toLocaleString();
               expect(expectedDateCreated).to.eql(actualDateCreated);
             })
-        );
+        )
       });
     });
   });
@@ -277,18 +273,20 @@ describe('Person Endpoint', () => {
         return (
           helpers.seedTables(
             db,
-          testUserArray,
-          testPersonArray,
-          testRmbrArray,
+            testUserArray,
+            testPersonArray,
+            testRmbrArray,
           )
         );
       });
 
-      it(`responds 200 and person is updated`, () => {
+      it(`responds 200 and person is updated`, function() {
         this.retries(3);
         const person_id = 1;
         const updatedPerson = {
-          person_name: 'NEW NAME!'
+          person_name: 'NEW NAME!!!',
+          user_id: 1,
+          type_of_person: 'Friend'
         };
 
         const expectedPerson = {
@@ -303,14 +301,14 @@ describe('Person Endpoint', () => {
             .patch(`/api/person/${person_id}`)
             .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .send(updatedPerson)
-            .expect(201)
+            .expect(200)
             .then(res => {
               return (
                 supertest(app)
                   .get(`/api/person/${person_id}`)
                   .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
                   .send(updatedPerson)
-                  .expect(201)
+                  .expect(200)
                   .then(res => {
                     return (
                       supertest(app)
@@ -320,8 +318,10 @@ describe('Person Endpoint', () => {
                         .expect(res => {
                           const actualDateModified = new Date(res.body.date_modified).toLocaleString();
                           const actualDateCreated = new Date(res.body.date_created).toLocaleString();
-                          expect(expectedPerson.date_modified).to.eql(actualDateModified);
-                          expect(expectedPerson.date_created).to.eql(actualDateCreated);
+                          expect(expectedPerson.date_modified.hours).to.eql(actualDateModified.hours);
+                          expect(expectedPerson.date_modified.day).to.eql(actualDateModified.day);
+                          expect(expectedPerson.date_created.hours).to.eql(actualDateCreated.hours);
+                          expect(expectedPerson.date_created.day).to.eql(actualDateCreated.day);
                         })
                     );
                   })

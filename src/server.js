@@ -3,7 +3,7 @@ const app = require('./app');
 
 // Configuration
 require('dotenv').config();
-const { PORT, DB_URL } = require('./config');
+const { PORT, DATABASE_URL } = require('./config')
 
 // Utilities
 const knex = require('knex');
@@ -11,7 +11,7 @@ const knex = require('knex');
 // Database
 const db = knex({
   client: 'pg',
-  connection: DB_URL
+  connection: DATABASE_URL
 })
 
 // Global variables

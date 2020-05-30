@@ -1,4 +1,3 @@
-  
 const app = require('../src/app');
 const knex = require('knex');
 const jwt = require('jsonwebtoken');
@@ -6,26 +5,25 @@ const helpers = require('./test-helpers');
 
 describe( 'Auth Endpoint', () => {
     let db;
+
     const { testUserArray } = helpers.makeFixtures();
     const testUser = testUserArray[0];
 
-    before('make db connection', () => {
+    before('make knex instance', () => {
         db = knex({
             client: 'pg',
             connection: process.env.TEST_DB_URL
-        });
-        app.set('db', db);
+        })
+        app.set('db', db)
     });
 
     after(`disconnect from database`, () => { db.destroy() });
-    
-    before(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
-
-    afterEach(`truncate database and restart identities`, () => { console.log('running'); helpers.cleanTables(db) });
+    beforeEach(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
+    afterEach(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
 
     describe('POST /api/auth/login', () => {
 
-        beforeEach('insert user', () => {
+        beforeEach('insert users', () => {
             return (
                 helpers.seedTables(
                     db,
@@ -152,12 +150,12 @@ describe( 'Auth Endpoint', () => {
             const expectedToken = jwt.sign(
                 { user_id: testUser.id }, // payload
                 process.env.JWT_SECRET,
-
                 {
                     subject: testUser.user_name,
                     expiresIn: process.env.JWT_EXPIRY,
                     algorithm: 'HS256'
                 }
+
             );
             return (
                 supertest(app)
@@ -165,7 +163,10 @@ describe( 'Auth Endpoint', () => {
                     .send(validUserCreds)
                     .expect(
                         200,
-                        { authToken: expectedToken }
+                        {
+                            authToken: expectedToken,
+                            user_id: testUser.id
+                        }
                     )
             );
         });

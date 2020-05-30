@@ -3,8 +3,8 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
-const { NODE_ENV } = require('./config')
 
+const { NODE_ENV } = require('./config')
 const personRouter = require('./person/person-router')
 const rmbrRouter = require('./rmbr/rmbr-router')
 const authRouter = require('./auth/auth-router')
@@ -27,7 +27,7 @@ app.use('/api/user', userRouter)
 
 app.get('/', (req, res) => {
    res.send(`Server's buns are buttered`)
-})
+});
 
 app.use(function errorHandler(error, req, res, next) {
   let response
@@ -38,6 +38,6 @@ app.use(function errorHandler(error, req, res, next) {
     response = { message: error.message, error }
   }
   res.status(500).json(response)
-})
+});
 
 module.exports = app

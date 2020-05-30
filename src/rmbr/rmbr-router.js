@@ -8,7 +8,7 @@ const jsonParser = express.json()
 
 rmbrRouter
     .route('/')
-    // .all(requireAuth)
+    .all(requireAuth)
     .get((req, res, next) => {
         RmbrService.getAllRmbrs(req.app.get('db'))
             .then(rbr => {
@@ -29,7 +29,6 @@ rmbrRouter
             newRmbr
         )
         .then(rmbr => {
-            console.log('POST RMBRS FIRING!')
             res
                 .status(201)
                 .location(path.posix.join(req.originalUrl, `/${rmbr.id}`))
@@ -40,7 +39,7 @@ rmbrRouter
 
 rmbrRouter
     .route('/:rmbr_id')
-    // .all(requireAuth)
+    .all(requireAuth)
     .all(checkRmbrExists)
     .get((req, res) => {
         res.json(RmbrService.serializeRmbr(res.rmbr))
@@ -82,8 +81,7 @@ rmbrRouter
 
 rmbrRouter
     .route('/user/:user_id')
-    // .all(requireAuth)
-    // .all(checkRmbrExists)
+    .all(requireAuth)
     .get((req, res, next) => {
         RmbrService.getByUserId(
             req.app.get('db'),

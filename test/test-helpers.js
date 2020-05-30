@@ -45,23 +45,23 @@ function makeUserArray() {
 };
 
 // Create dummy people
-function makePersonArray(users) {
+function makePersonArray(user) {
     return [
         {
             id: 1,
             person_name: 'Test Person 1',
             type_of_person: 'Family',
-            user_id: users[0].id,
-            first_met: new Date('2029-01-22T16:28:32.615Z'),
-            last_contact: new Date('2029-01-22T16:28:32.615Z'),
-            date_created: new Date('2029-01-22T16:28:32.615Z'),
-            date_modified: new Date('2029-01-22T16:28:32.615Z')
+            user_id: user[0].id,
+            first_met: new Date(),
+            last_contact: new Date(),
+            date_created: new Date(),
+            date_modified: new Date()
         },
         {
             id: 2,
             person_name: 'Test Person 2',
             type_of_person: 'Co-Worker',
-            user_id: users[1].id,
+            user_id: user[1].id,
             first_met: new Date('2029-01-22T16:28:32.615Z'),
             last_contact: new Date('2029-01-22T16:28:32.615Z'),
             date_created: new Date('2029-01-22T16:28:32.615Z'),
@@ -71,7 +71,7 @@ function makePersonArray(users) {
             id: 3,
             person_name: 'Test Person 3',
             type_of_person: 'Friend',
-            user_id: users[2].id,
+            user_id: user[2].id,
             first_met: new Date('2029-01-22T16:28:32.615Z'),
             last_contact: new Date('2029-01-22T16:28:32.615Z'),
             date_created: new Date('2029-01-22T16:28:32.615Z'),
@@ -89,9 +89,9 @@ function makeRmbrArray(users, people) {
             category: 'Past',
             rmbr_text: 'RmbrListItem 1 Text',
             person_id: people[0].id,
-            date_created: new Date('2029-01-22T16:28:32.615Z'),
+            date_created: new Date(),
             user_id: users[0].id,
-            date_modified: new Date('2029-01-22T16:28:32.615Z')
+            date_modified: new Date()
         },
         {
             id: 2,
@@ -147,6 +147,7 @@ function makeRmbrArray(users, people) {
 };
 
 function seedTables(db, user, person, rmbr) {
+
     return db.transaction(async trx => {
 
         if (user.length > 0) {
@@ -178,10 +179,10 @@ function seedTables(db, user, person, rmbr) {
         };
 
     });
+
 };
 
 function makeExpectedPerson(person) {
-    
     return {
         id: person.id,
         person_name: person.person_name,
@@ -205,7 +206,7 @@ function makeExpectedRmbr(rmbr) {
         person_id: rmbr.person_id,
         date_created: rmbr.date_created.toISOString(),
         user_id: rmbr.user_id,
-        date_modified: rmbr.date_modified
+        date_modified: rmbr.date_modified.toISOString(),
     }
 };
 
@@ -237,14 +238,14 @@ function makeFixtures() {
     const testUserArray = makeUserArray();
     const testPersonArray = makePersonArray(testUserArray);
     const testRmbrArray = makeRmbrArray(testUserArray, testPersonArray);
-    console.log(testUserArray)
-    console.log(testPersonArray)
-    console.log(testRmbrArray)
-    return { testUserArray: testUserArray, testPersonArray: testPersonArray, testRmbrArray: testRmbrArray };
+    return {
+        testUserArray: testUserArray,
+        testPersonArray: testPersonArray,
+        testRmbrArray: testRmbrArray
+    };
 };
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
-
     const token = jwt.sign(
         { user_id: user.id },
         secret,

@@ -2,7 +2,7 @@ const app = require('../src/app');
 const knex = require('knex');
 const helpers = require('./test-helpers');
 
-describe(`Tasks Endpoint`, () => {
+describe(`rmbr endpoint`, () => {
     let db;
     // create db schema as JS objects
     const {
@@ -20,7 +20,7 @@ describe(`Tasks Endpoint`, () => {
     });
 
     after(`disconnect from db`, () => { return db.destroy() });
-    before(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
+    beforeEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
     afterEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
 
     describe(`GET /api/rmbr`, () => {
@@ -33,7 +33,7 @@ describe(`Tasks Endpoint`, () => {
                     db,
                     testUserArray,
                     testPersonArray,
-                    testRmbrArray
+                    []
                   )
                 );
             });
@@ -65,7 +65,7 @@ describe(`Tasks Endpoint`, () => {
             it(`responds with 200 and a rmbr array`, () => {
                 const expectedRmbrArray =
                     testRmbrArray
-                        .filter(rbr => rbr.user_id === testUserArray[0].id)
+                        // .filter(rbr => rbr.user_id === testUserArray[0].id)
                         .map(tsk => {
                             return (
                                 helpers.makeExpectedRmbr(tsk)
@@ -94,7 +94,7 @@ describe(`Tasks Endpoint`, () => {
                     db,
                     testUserArray,
                     testPersonArray,
-                    testRmbrArray
+                    []
                   )
                 );
             });
@@ -127,7 +127,7 @@ describe(`Tasks Endpoint`, () => {
 
             it(`responds 200 and specified rmbr`, () => {
                 const rmbr_id = 1;
-                const expectedRmbr = makeExpectedRmbr(testRmbrArray[rmbr_id - 1]);
+                const expectedRmbr = helpers.makeExpectedRmbr(testRmbrArray[rmbr_id - 1]);
                 return (
                     supertest(app)
                         .get(`/api/rmbr/${rmbr_id}`)
@@ -176,7 +176,9 @@ describe(`Tasks Endpoint`, () => {
                             expect(res.headers.location).to.eql(`/api/rmbr/${res.body.id}`);
                             const expectedCreatedDate = new Date().toLocaleString();
                             const actualCreatedDate = new Date(res.body.date_created).toLocaleString();
-                            expect(expectedCreatedDate).to.eql(actualCreatedDate);
+                            expect(expectedCreatedDate.hours).to.eql(actualCreatedDate.hours)
+                            expect(expectedCreatedDate.day).to.eql(actualCreatedDate.day)
+
                         })
                 );
             });
@@ -259,7 +261,7 @@ describe(`Tasks Endpoint`, () => {
                     db,
                     testUserArray,
                     testPersonArray,
-                    [] //testRmbrs
+                    []
                   )
                 );
             });
@@ -299,7 +301,10 @@ describe(`Tasks Endpoint`, () => {
                 this.retries(3);
                 const rmbr_id = 1;
                 const updatedRmbr = {
-                    rmbr_title: 'NEW RMBR TITLE!!'
+                    rmbr_title: 'NEW RMBR TITLE!!',
+                    rmbr_text: 'new text',
+                    person_id: 1,
+                    user_id: 1
                 };
                 const expectedRmbr = {
                     ...testRmbrArray[rmbr_id - 1],
@@ -312,12 +317,34 @@ describe(`Tasks Endpoint`, () => {
                     supertest(app)
                         .patch(`/api/rmbr/${rmbr_id}`)
                         .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
+                        .send(updatedRmbr)
                         .expect(200)
-                        .expect(res => {
-                            const actualDateCreated = new Date(res.body.date_created).toLocaleString();
-                            const actualDateModified = new Date(res.body.date_modified).toLocaleString();
-                            
+                        .then(res => {
+                            return (
+                                supertest(app)
+                                    .get(`/api/rmbr/${rmbr_id}`)
+                                    .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
+                                    .send(updatedRmbr)
+                                    .expect(200)
+                                    .then(res => {
+                                        return (
+                                            supertest(app)
+                                            .get(`/api/rmbr/${rmbr_id}`)
+                                            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
+                                            .expect(200)
+                                                .expect(res => {
+                                                    const actualDateCreated = new Date(res.body.date_created).toLocaleString();
+                                                    const actualDateModified = new Date(res.body.date_modified).toLocaleString();
+                                                    expect(expectedRmbr.date_created.hours).eql(actualDateCreated.hours)
+                                                    expect(expectedRmbr.date_created.day).eql(actualDateCreated.day)
+                                                    expect(expectedRmbr.date_modified.hours).eql(actualDateModified.hours)
+                                                    expect(expectedRmbr.date_modified.day).eql(actualDateModified.day)
+                                                })
+                                        )
+                                    })
+                            )
                         })
+
                 )
 
             })

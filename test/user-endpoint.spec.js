@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe('Users Endpoint', function() {
+describe('user endpoint', function() {
 
     let db
     const { testUserArray } = helpers.makeFixtures()
@@ -16,14 +16,13 @@ describe('Users Endpoint', function() {
         })
         app.set('db', db)
     });
-
     after('disconnect from db', () => db.destroy());
-    before('cleanup', () => helpers.cleanTables(db));
+    beforeEach('cleanup', () => helpers.cleanTables(db));
     afterEach('cleanup', () => helpers.cleanTables(db));
 
     describe(`POST /api/user`, () => {
 
-        context('User Validation', () => {
+        context('user validation', () => {
 
             beforeEach('insert user', () => {
                 return (
@@ -40,7 +39,7 @@ describe('Users Endpoint', function() {
 
             requiredFields.forEach(field => {
                 const registerAttemptBody = {
-                    id: 10,
+                    // id: 10,
                     user_name: 'test user_name',
                     password: 'test password',
                 }
@@ -73,8 +72,6 @@ describe('Users Endpoint', function() {
                       user_name: 'test user_name',
                       password: '*'.repeat(73)
                     }
-                    // console.log(userLongPassword)
-                    // console.log(userLongPassword.password.length)
                     return supertest(app)
                       .post('/api/user')
                       .send(userLongPassword)
@@ -127,15 +124,13 @@ describe('Users Endpoint', function() {
                       .expect(400, { error: 'Username already taken' })
                 })
 
-                context(`Happy path`, () => {
+                context(`happy path`, () => {
 
                     it(`responds 201, serialized user, storing bcryped password`, () => {
-
                         const newUser = {
                           user_name: 'test@gmail.com',
                           password: '11AAaa!!'
                         }
-            
                         return supertest(app)
                           .post('/api/user')
                           .send(newUser)
@@ -162,7 +157,7 @@ describe('Users Endpoint', function() {
                                 expect(actualDate).to.eql(expectedDate)
                                 return bcrypt.compare(newUser.password, row.password)
                               })
-                              .then(compare => {
+                              .then(compareMatch => {
                                 expect(compareMatch).to.be.true
                               })
                           )

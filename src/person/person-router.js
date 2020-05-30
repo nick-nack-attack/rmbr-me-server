@@ -7,7 +7,7 @@ const personRouter = express.Router()
 
 personRouter
     .route('/')
-    // .all(requireAuth)
+    .all(requireAuth)
     .get((req, res, next) => {
         PersonService.getAllPersons(req.app.get('db'))
             .then(people => {
@@ -38,11 +38,13 @@ personRouter
 
 personRouter
     .route('/user/:user_id')
-    // .all(requireAuth)
-    // .all(checkPersonExists)
+    .all(requireAuth)
     .get((req, res, next) => {
         const { user_id } = req.params;
-        PersonService.getPersonByUserId(req.app.get('db'), user_id)
+        PersonService.getPersonByUserId(
+            req.app.get('db'),
+            user_id
+        )
           .then((person) => {
             res.json(person);
           })
@@ -51,8 +53,8 @@ personRouter
 
 personRouter
     .route('/:person_id/rmbr')
-    // .all(requireAuth)
-    // .all(checkPersonExists)
+    .all(requireAuth)
+    .all(checkPersonExists)
     .get((req, res, next) => {
         PersonService.getRmbrByPersonId(
             req.app.get('db'),
@@ -66,11 +68,12 @@ personRouter
 
 personRouter
     .route('/:person_id')
+    .all(requireAuth)
+    .all(checkPersonExists)
     .get((req, res, next) => {
-        const { person_id } = req.params;
         PersonService.getPersonById(
             req.app.get('db'),
-            person_id
+            req.params.person_id
         )
         .then((person) => {
             res.json(person)
@@ -110,24 +113,22 @@ personRouter
     });
 
 // Wait for promises, yo.
-// async function checkPersonExists(req, res, next) {
-//     try {
-//         const person = await PersonService.getPeoplebyuser_id(
-//             req.app.get('db'),
-//             req.params.user_id
-//         )
+async function checkPersonExists(req, res, next) {
+    try {
+        const person = await PersonService.getPersonById(
+            req.app.get('db'),
+            req.params.person_id
+        )
 
-//     if(!person)
-//         return res.status(404).json({
-//             error:`User id doesn't exist`
-//         })
-
-//     res.person = person
-//     next()
-//     }
-//     catch(error) { 
-//         next(error) 
-//     }
-// }
+    if(!person)
+        return res.status(404).json({
+            error:`Person doesn't exist`
+        })
+    res.person = person
+    next()
+    } catch (error) {
+        next(error)
+    }
+}
 
 module.exports = personRouter
