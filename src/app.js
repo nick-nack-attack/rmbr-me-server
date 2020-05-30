@@ -16,13 +16,6 @@ const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
 
-let allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', "*");
-  res.header('Access-Control-Allow-Headers', "*");
-  next();
-}
-app.use(allowCrossDomain);
-
 app.use(morgan(morganOption))
 app.use(cors())
 app.use(helmet())
