@@ -16,6 +16,13 @@ const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
 
+let allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Headers', "*");
+  next();
+}
+app.use(allowCrossDomain);
+
 app.use(morgan(morganOption))
 app.use(cors())
 app.use(helmet())
@@ -32,7 +39,7 @@ app.get('/', (req, res) => {
 app.use(function errorHandler(error, req, res, next) {
   let response
   if (NODE_ENV === 'production') {
-    response = { error: { message: 'server error' } }
+    response = { message: 'server error' }  // response = { error: { message: 'server error' } }
   } else {
     console.error(error)
     response = { message: error.message, error }
