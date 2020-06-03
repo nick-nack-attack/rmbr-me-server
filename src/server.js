@@ -17,6 +17,7 @@ const db = knex({
 // Global variables
  app.set('db', db)
 
+// Oven is hot means it's listening
  app.listen(PORT, () => console.log(`The oven is hot on ${PORT}`));
  
 

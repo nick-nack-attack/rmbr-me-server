@@ -17,8 +17,8 @@ rmbrRouter
             .catch(next)
     })
     .post( jsonParser, (req, res, next) => {
-        const { rmbr_title, category, rmbr_text, person_id, user_id } = req.body
-        const newRmbr = { rmbr_title, category, rmbr_text, person_id, user_id }
+        const { rmbr_title, rmbr_text, person_id, user_id } = req.body
+        const newRmbr = { rmbr_title, rmbr_text, person_id, user_id }
 
         for (const [key,value] of Object.entries(newRmbr))
             if (value === null) 

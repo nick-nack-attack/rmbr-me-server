@@ -47,7 +47,8 @@ authRouter
 })
 
 
-authRouter.post('/refresh', requireAuth, (req, res) => {
+authRouter
+    .post('/refresh', requireAuth, (req, res) => {
     const sub = req.user.user_name
     const payload = { user_id: req.user.id }
     const user_id = payload.user_id

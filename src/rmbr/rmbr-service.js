@@ -55,7 +55,6 @@ const RmbrService = {
             user_id: rmbr.user_id,
             rmbr_title: xss(rmbr.rmbr_title),
             rmbr_text: xss(rmbr.rmbr_text),
-            category: rmbr.category,
             date_created: rmbr.date_created,
             date_modified: rmbr.date_modified
         }

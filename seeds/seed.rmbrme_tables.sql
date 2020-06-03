@@ -20,19 +20,19 @@ INSERT INTO rmbrme_people (person_name, type_of_person, user_id)
         ('Natalia', 'Friend', 2),
         ('Joanna', 'Co-Worker', 2);
 
-INSERT INTO rmbrme_rmbrs (rmbr_title, category, rmbr_text, person_id, user_id)
+INSERT INTO rmbrme_rmbrs (rmbr_title, rmbr_text, person_id, user_id)
 	VALUES
-		('Hold grudge against the rebels', 'Past', 'null', 1, 1),
-		('Die with my face mask off', 'Current', 'I hope my son will not be there', 1, 1),
-   		('Punch a nazi in the face', 'Past', 'deserved it', 2, 1),
-    	('Find Harrison Ford to play me', 'Current', null, 2, 1),
-    	('Speak poorly about the couch of Charlie Murphy', 'Past', null, 3, 1),
-    	('Be myself', 'Current', '... I am Rick James.', 3, 1),
-    	('Drink heavily', 'Past', 'Somehow about to keep it together', 4, 2),
-    	('Stop the evil guy such-and-such', 'Current', 'Whatever the current iteration is', 4, 2),
-    	('Guess the password Boris set', 'Past', 'apparently it was not "knockers"', 5, 2),
-    	('Be used as an object by the men in the movie', 'Current', null, 5, 2),
-    	('Yell "confirmed" in a loud whisper voice', 'Past', null, 6, 2),
-    	('Apologize for Perfect Dark Zero', 'Current', '... unti the end of time.', 6, 2);
+		('Hold grudge against the rebels', null, 1, 1),
+		('Die with my face mask off', 'I hope my son will not be there', 1, 1),
+   		('Punch a nazi in the face', 'deserved it', 2, 1),
+    	('Find Harrison Ford to play me', null, 2, 1),
+    	('Speak poorly about the couch of Charlie Murphy', null, 3, 1),
+    	('Be myself', '... I am Rick James.', 3, 1),
+    	('Drink heavily', 'Somehow about to keep it together', 4, 2),
+    	('Stop the evil guy such-and-such', 'Whatever the current iteration is', 4, 2),
+    	('Guess the password Boris set', 'apparently it was not "knockers"', 5, 2),
+    	('Be used as an object by the men in the movie', null, 5, 2),
+    	('Yell "confirmed" in a loud whisper voice', null, 6, 2),
+    	('Apologize for Perfect Dark Zero', '... unti the end of time.', 6, 2);
 
     COMMIT;

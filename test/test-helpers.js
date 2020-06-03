@@ -86,7 +86,6 @@ function makeRmbrArray(users, people) {
         {
             id: 1,
             rmbr_title: 'RmbrListItem 1 Title',
-            category: 'Past',
             rmbr_text: 'RmbrListItem 1 Text',
             person_id: people[0].id,
             date_created: new Date(),
@@ -96,7 +95,6 @@ function makeRmbrArray(users, people) {
         {
             id: 2,
             rmbr_title: 'RmbrListItem 2 Title',
-            category: 'Current',
             rmbr_text: 'RmbrListItem 2 Text',
             person_id: people[0].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
@@ -106,7 +104,6 @@ function makeRmbrArray(users, people) {
         {
             id: 3,
             rmbr_title: 'RmbrListItem 3 Title',
-            category: 'Past',
             rmbr_text: 'RmbrListItem 3 Text',
             person_id: people[1].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
@@ -116,7 +113,6 @@ function makeRmbrArray(users, people) {
         {
             id: 4,
             rmbr_title: 'RmbrListItem 4 Title',
-            category: 'Current',
             rmbr_text: 'RmbrListItem 4 Text',
             person_id: people[1].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
@@ -126,7 +122,6 @@ function makeRmbrArray(users, people) {
         {
             id: 5,
             rmbr_title: 'RmbrListItem 5 Title',
-            category: 'Past',
             rmbr_text: 'RmbrListItem 5 Text',
             person_id: people[2].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
@@ -136,7 +131,6 @@ function makeRmbrArray(users, people) {
         {
             id: 6,
             rmbr_title: 'RmbrListItem 6 Title',
-            category: 'Past',
             rmbr_text: 'RmbrListItem 6 Text',
             person_id: people[2].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
@@ -201,7 +195,6 @@ function makeExpectedRmbr(rmbr) {
     return {
         id: rmbr.id,
         rmbr_title: rmbr.rmbr_title,
-        category: rmbr.category,
         rmbr_text: rmbr.rmbr_text,
         person_id: rmbr.person_id,
         date_created: rmbr.date_created.toISOString(),
@@ -215,7 +208,6 @@ function makeMaliciousRmbr(person) {
     const maliciousRmbr = {
         id: 911,
         rmbr_title: 'Naughty naughty very naughty <script>alert("xss");</script>',
-        category: 'Past',
         rmbr_text: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
         person_id: person.id,
         date_created: new Date().toISOString(),
