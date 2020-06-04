@@ -10,12 +10,12 @@ JWT authentication provides extra security for users.
 The user will be logged out if idle for an amount of time.
 
 ##Table of Contents
-1. [Setup](##Setup)
-2. [Technology](##Technology)
-3. [Endpoints](##Endpoints)
-4. [Scripts](##Scripts)
-5. [Deploying](##Deploying)
-6. [Special Thanks](##Deploying)
+1. [Setup](#Setup)
+2. [Technology](#Technology)
+3. [Endpoints](#Endpoints)
+4. [Scripts](#Scripts)
+5. [Deploying](#Deploying)
+6. [Special Thanks](#Thanks)
 
 ## Setup
 Complete the following steps to start a new project (NEW-PROJECT-NAME):
@@ -71,6 +71,6 @@ When your new project is ready for deployment,
 add a new Heroku application with `heroku create`. 
 This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
 
-## Special Thanks
+## Thanks
 
 I would like to recognize Jaime Gammel, Cali Stephans, Nicholas Hazel, Fernando Filho, and Tiago Fassoni for their guidance and support.
