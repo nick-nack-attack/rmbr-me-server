@@ -9,7 +9,7 @@ You create people and attached rmbrs (notes) to them.
 JWT authentication provides extra security for users.
 The user will be logged out if idle for an amount of time.
 
-##Table of Contents
+## Table of Contents
 1. [Setup](#Setup)
 2. [Technology](#Technology)
 3. [Endpoints](#Endpoints)
