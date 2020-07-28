@@ -1,21 +1,34 @@
-const express = require('express');
+// user router
+const { json, Router } = require('express');
+const jsonBodyParser = json();
+const userRouter = Router();
 const path = require('path');
+const { format } = require('date-fns');
+
+// service
 const UserService = require('./user-service');
 
-const userRouter = express.Router();
-const jsonBodyParser = express.json();
-
+// for posting new users (i.e. sign up)
 userRouter
   .post('/', jsonBodyParser, (req, res, next) => {
-    const { password, user_name } = req.body;
 
-    for (const field of ['user_name', 'password'])
-      if (!req.body[field])
-        return res.status(400).json({ error: `Missing '${field}' in request body` });
+    const { password, user_name } = req.body;
+    const userLogin = { password, user_name };
+
+    for (const [key,value] of Object.entries(userLogin))
+            if (value === undefined || value === null) 
+                return res.status(400).json({
+                    error: `Missing '${key}' in request body`
+                });
 
     const passwordError = UserService.validatePassword(password);
+
     if (passwordError)
-      return res.status(400).json({ error: passwordError });
+      return res
+        .status(400)
+        .json({ 
+          error: passwordError 
+        });
 
     UserService.hasUserWithUserName(
         req.app.get('db'),
@@ -27,11 +40,15 @@ userRouter
 
         return UserService.hashPassword(password)
           .then(hashedPassword => {
+            const formattedDate = format( new Date(), 'M/dd/yyyy, K:mm:s b' );
+            console.log(`formatted date:`, formattedDate);
             const newUser = {
               user_name,
               password: hashedPassword,
-              date_created: 'now()',
+              date_created: formattedDate
+              
             };
+            console.log(`newUser`, newUser);
 
             return UserService.insertUser(
                 req.app.get('db'),

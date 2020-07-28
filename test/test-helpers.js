@@ -42,7 +42,7 @@ function makeUserArray() {
             password: 'password'
         }
     ];
-};
+}
 
 // Create dummy people
 function makePersonArray(user) {
@@ -78,7 +78,7 @@ function makePersonArray(user) {
             date_modified: new Date('2029-01-22T16:28:32.615Z')
         }
     ];
-};
+}
 
 // Create dummy rmbr
 function makeRmbrArray(users, people) {
@@ -138,7 +138,7 @@ function makeRmbrArray(users, people) {
             date_modified: new Date('2029-01-22T16:28:32.615Z')
         }
     ];
-};
+}
 
 function seedTables(db, user, person, rmbr) {
 
@@ -154,7 +154,7 @@ function seedTables(db, user, person, rmbr) {
                 `SELECT setval('rmbrme_users_id_seq', ?)`,
                 [user[user.length - 1].id]
             );
-        };
+        }
 
         if (person.length > 0) {
             await trx.into('rmbrme_people').insert(person);
@@ -162,7 +162,7 @@ function seedTables(db, user, person, rmbr) {
                 `SELECT setval('rmbrme_people_id_seq', ?)`,
                 [person[person.length - 1].id]
             );
-        };
+        }
 
         if (rmbr.length > 0) {
             await trx.into('rmbrme_rmbrs').insert(rmbr);
@@ -170,11 +170,11 @@ function seedTables(db, user, person, rmbr) {
                 `SELECT setval ('rmbrme_rmbrs_id_seq', ?)`,
                 [rmbr[rmbr.length - 1].id]
             );
-        };
+        }
 
     });
 
-};
+}
 
 function makeExpectedPerson(person) {
     return {
@@ -213,18 +213,17 @@ function makeMaliciousRmbr(person) {
         date_created: new Date().toISOString(),
         user_id: person.user_id,
         date_modified: new Date().toISOString()
-    }
-
+    };
     const expectedRmbr = {
         ...makeExpectedRmbr([user], maliciousRmbr),
         rmbr_title: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
         rmbr_text: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
-    }
+    };
     return { 
         maliciousRmbr, 
         expectedRmbr 
-    }
-};
+    };
+}
 
 function makeFixtures() {
     const testUserArray = makeUserArray();
@@ -235,7 +234,7 @@ function makeFixtures() {
         testPersonArray: testPersonArray,
         testRmbrArray: testRmbrArray
     };
-};
+}
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     const token = jwt.sign(
@@ -247,7 +246,7 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
         }
     );
     return `Bearer ${token}`;
-};
+}
 
 module.exports = {
     makeAuthHeader,

@@ -33,9 +33,9 @@ describe('Person Endpoint', () => {
         return (
           helpers.seedTables(
             db,
-          testUserArray,
-          [],
-          [],
+            testUserArray,
+            [],
+            [],
           )
         );
       });

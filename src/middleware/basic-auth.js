@@ -1,3 +1,5 @@
+// replaced by jwt
+// left here for reference
 const AuthService = require('../auth/auth-service')
 
 function requireAuth(req, res, next) {

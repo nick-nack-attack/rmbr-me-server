@@ -1,3 +1,4 @@
+// rmbr service
 const xss = require('xss')
 
 const RmbrService = {
@@ -62,4 +63,4 @@ const RmbrService = {
 
 }
 
-module.exports = RmbrService
+module.exports = RmbrService;

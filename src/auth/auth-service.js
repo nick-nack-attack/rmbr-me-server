@@ -1,31 +1,51 @@
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const config = require('../config')
+// authentication service
+const config = require('../config');
+
+// utils
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const AuthService = {
 
     getUserWithUsername(db, user_name) {
-        return db('rmbrme_users')
-        .where({ user_name })
-        .first()
+        return (
+            db('rmbrme_users')
+                .where({ user_name })
+                .first()
+        )
     },
 
     comparePasswords(password, hash) {
-        return bcrypt.compare(password, hash)
+        return ( 
+            bcrypt
+                .compare(password, hash)
+        )
     },
 
     createJwt(subject, payload) {
-        return jwt.sign(payload, config.JWT_SECRET, {
-            subject,
-            expiresIn: config.JWT_EXPIRY,
-            algorithm: 'HS256'
-        })
+        return (
+            jwt
+                .sign(
+                    payload, 
+                    config.JWT_SECRET, 
+                    {
+                        subject,
+                        expiresIn: config.JWT_EXPIRY,
+                        algorithm: 'HS256'
+                    }
+                )
+        )
     },
 
     verifyJwt(token) {
-        return jwt.verify(token, config.JWT_SECRET,
-            {algorithms: ['HS256']
-        })
+        return (
+            jwt
+                .verify(token, config.JWT_SECRET,
+                    { 
+                        algorithms: ['HS256'] 
+                    }
+                )
+        )
     },
 
     parseBasicToken(token) {
@@ -35,6 +55,6 @@ const AuthService = {
             .split(':')
     }
 
-}
+};
 
-module.exports = AuthService
+module.exports = AuthService;
