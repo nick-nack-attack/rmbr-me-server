@@ -1,26 +1,24 @@
-const bcrypt = require('bcryptjs')
-const xss = require('xss')
-
-const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/
+// service for user router
+const bcrypt = require('bcryptjs');
+const xss = require('xss');
+// variable for special characters
+const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
 const UserService = {
-
-  hasUserWithUserName(db, user_name) {
+  hasUserWithUserName: (db, user_name) => {
     return db('rmbrme_users')
       .where({ user_name })
       .first()
       .then(user => !!user)
   },
-
-  insertUser(db, newUser) {
+  insertUser: (db, newUser) => {
     return db
       .insert(newUser)
       .into('rmbrme_users')
       .returning('*')
       .then(([user]) => user)
   },
-
-  validatePassword(password) {
+  validatePassword: (password) => {
     if (password.length < 8) {
       return 'Password must be longer than 8 characters'
     }
@@ -35,19 +33,16 @@ const UserService = {
     }
     return null
   },
-
-  hashPassword(password) {
+  hashPassword: (password) => {
     return bcrypt.hash(password, 12)
   },
-
-  serializeUser(user) {
+  serializeUser: (user) => {
     return {
       id: user.id,
       user_name: xss(user.user_name),
       date_created: new Date(user.date_created)
     }
   },
+};
 
-}
-
-module.exports = UserService
+module.exports = UserService;

@@ -1,25 +1,21 @@
-const xss = require('../../node_modules/xss')
+const xss = require('../../node_modules/xss');
 
 const PersonService = {
-
-    getAllPersons(db) {
+    getAllPersons: (db) => {
         return db
             .from('rmbrme_people')
             .select('*')
     },
-
-    getPersonById(db, id) {
+    getPersonById: (db, id) => {
         return PersonService.getAllPersons(db)
             .where('id', id)
             .first()
     },
-
-    getPersonByUserId(db, user_id) {
+    getPersonByUserId: (db, user_id) => {
         return PersonService.getAllPersons(db)
             .where('user_id', user_id)
     },
-
-    insertPerson(db, newPerson) {
+    insertPerson: (db, newPerson) => {
         return db
           .insert(newPerson)
           .into('rmbrme_people')
@@ -29,15 +25,13 @@ const PersonService = {
                 PersonService.getPersonById(db, person.id)
             )
       },
-
-    deletePerson(db, id) {
+    deletePerson: (db, id) => {
         return db
             .from('rmbrme_people')
             .where('id', id)
             .delete()
     },
-
-    updatePerson(db, id, fields) {
+    updatePerson: (db, id, fields) => {
         return db
             .from('rmbrme_people')
             .where('id', id)
@@ -46,8 +40,7 @@ const PersonService = {
                 PersonService.getPersonById(db, id)
             )
     },
-
-    serializePerson(person) {
+    serializePerson: (person) => {
         return {
           id: person.id,
           person_name: xss(person.person_name),
@@ -59,8 +52,7 @@ const PersonService = {
           date_modified: person.date_modified,
         }  
     },
-
-    serializeRmbr(rmbr) {
+    serializeRmbr: (rmbr) => {
         return {
             id: rmbr.id,
             rmbr_title: xss(rmbr.rmbr_title),
@@ -69,13 +61,12 @@ const PersonService = {
             person_id: rmbr.person_id
         }
     },
-
-    getRmbrByPersonId(db, person_id) {
+    getRmbrByPersonId: (db, person_id) => {
         return db
             .from('rmbrme_rmbrs')
             .select('*')
             .where('person_id',person_id)
     }
-}
+};
 
-module.exports = PersonService
+module.exports = PersonService;

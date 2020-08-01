@@ -4,7 +4,7 @@ TRUNCATE
     rmbrme_users,
     rmbrme_people,
     rmbrme_rmbrs
-    RESTART IDENTITY CASCADE;
+    roles RESTART IDENTITY CASCADE;
 
 INSERT INTO rmbrme_users (user_name, password, date_created)
     VALUES 
@@ -35,4 +35,9 @@ INSERT INTO rmbrme_rmbrs (rmbr_title, category, rmbr_text, person_id, user_id)
     	('Yell "confirmed" in a loud whisper voice', 'Past', null, 6, 2),
     	('Apologize for Perfect Dark Zero', 'Current', '... unti the end of time.', 6, 2);
 
-    COMMIT;
+INSERT INTO roles(id, role)
+    VALUES
+        (1, 'Admin'),
+        (2, 'End-User');
+
+ COMMIT;
