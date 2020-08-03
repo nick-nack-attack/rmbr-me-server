@@ -7,5 +7,5 @@ module.exports = {
     CLIENT_ORIGIN: process.env.CLIENT_ORIGIN,
     JWT_EXPIRY: process.env.JWT_EXPIRY,
     API_TOKEN: process.env.API_TOKEN,
-}
-
+    ADMIN_PERMISSION: process.env.ADMIN_PERMISSION
+};
