@@ -1,49 +1,59 @@
-// use local env file
-require('dotenv').config();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable-next-line:no-var-requires
+require("dotenv").config();
+// middleware and configuration
+const express_1 = __importDefault(require("express"));
+const morgan_1 = __importDefault(require("morgan"));
+const cors_1 = __importDefault(require("cors"));
+const helmet_1 = __importDefault(require("helmet"));
+const config_1 = __importDefault(require("./config"));
+// routers
+const person_router_1 = __importDefault(require("./person/person-router"));
+const rmbr_router_1 = __importDefault(require("./rmbr/rmbr-router"));
+const auth_router_1 = __importDefault(require("./auth/auth-router"));
+const user_router_1 = __importDefault(require("./user/user-router"));
 // main express root
-var express = require('express');
-var app = express();
-// configuration
-var NODE_ENV = require('./config').NODE_ENV;
-var morganOption = (NODE_ENV === 'production')
+const app = express_1.default();
+const morganOption = (config_1.default.NODE_ENV === 'production')
     ? 'tiny'
     : 'common';
-// middleware
-var morgan = require('morgan');
-var cors = require('cors');
-var helmet = require('helmet');
-// routers
-var personRouter = require('./person/person-router');
-var rmbrRouter = require('./rmbr/rmbr-router');
-var authRouter = require('./auth/auth-router');
-var userRouter = require('./user/user-router');
 // initialize middleware
-app.use(morgan(morganOption));
-app.use(cors());
-app.use(helmet());
+app.use(morgan_1.default(morganOption));
+app.use(cors_1.default());
+app.use(helmet_1.default());
 // basic root to confirm server is running
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.send("Server's buns are buttered");
 });
-// routes
-app.use('/api/person', personRouter);
-app.use('/api/rmbr', rmbrRouter);
-app.use('/api/auth', authRouter);
-app.use('/api/user', userRouter);
-// error handler settings
-app.use(function errorHandler(error, req, res, next) {
-    var response;
-    if (NODE_ENV === 'production') {
-        response = { message: 'server error' }; // alt -> response = { error: { message: 'server error' } }
-    }
-    else {
-        console.error(error);
+// api endpoints
+app.use("/api/person", person_router_1.default);
+app.use("/api/rmbr", rmbr_router_1.default);
+app.use("/api/auth", auth_router_1.default);
+app.use("/api/user", user_router_1.default);
+// define error handler
+const errorHandler = (err, req, res, next) => {
+    let response;
+    if (config_1.default.NODE_ENV === 'production') {
         response = {
-            message: error.message, error: error
+            error: {
+                message: 'server error'
+            }
         };
     }
-    res
-        .status(500)
-        .json(response);
-});
-module.exports = app;
+    else {
+        // tslint:disable-next-line:no-console
+        console.error(err);
+        response = {
+            message: err.message, err
+        };
+    }
+    res.status(500).json(response);
+};
+// use error handler
+app.use(errorHandler);
+exports.default = app;
+//# sourceMappingURL=app.js.map

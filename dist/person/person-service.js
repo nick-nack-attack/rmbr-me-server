@@ -1,48 +1,41 @@
-var xss = require('../../node_modules/xss');
-var PersonService = {
-    getAllPersons: function (db) {
+const xss = require('../../node_modules/xss');
+const PersonService = {
+    getAllPersons: (db) => {
         return db
             .from('rmbrme_people')
             .select('*');
     },
-    getPersonById: function (db, id) {
+    getPersonById: (db, id) => {
         return PersonService.getAllPersons(db)
             .where('id', id)
             .first();
     },
-    getPersonByUserId: function (db, user_id) {
+    getPersonByUserId: (db, user_id) => {
         return PersonService.getAllPersons(db)
             .where('user_id', user_id);
     },
-    insertPerson: function (db, newPerson) {
+    insertPerson: (db, newPerson) => {
         return db
             .insert(newPerson)
             .into('rmbrme_people')
             .returning('*')
-            .then(function (_a) {
-            var person = _a[0];
-            return person;
-        })
-            .then(function (person) {
-            return PersonService.getPersonById(db, person.id);
-        });
+            .then(([person]) => person)
+            .then((person) => PersonService.getPersonById(db, person.id));
     },
-    deletePerson: function (db, id) {
+    deletePerson: (db, id) => {
         return db
             .from('rmbrme_people')
             .where('id', id)
             .delete();
     },
-    updatePerson: function (db, id, fields) {
+    updatePerson: (db, id, fields) => {
         return db
             .from('rmbrme_people')
             .where('id', id)
             .update(fields)
-            .then(function (res) {
-            return PersonService.getPersonById(db, id);
-        });
+            .then((res) => PersonService.getPersonById(db, id));
     },
-    serializePerson: function (person) {
+    serializePerson: (person) => {
         return {
             id: person.id,
             person_name: xss(person.person_name),
@@ -54,7 +47,7 @@ var PersonService = {
             date_modified: person.date_modified,
         };
     },
-    serializeRmbr: function (rmbr) {
+    serializeRmbr: (rmbr) => {
         return {
             id: rmbr.id,
             rmbr_title: xss(rmbr.rmbr_title),
@@ -63,7 +56,7 @@ var PersonService = {
             person_id: rmbr.person_id
         };
     },
-    getRmbrByPersonId: function (db, person_id) {
+    getRmbrByPersonId: (db, person_id) => {
         return db
             .from('rmbrme_rmbrs')
             .select('*')
@@ -71,3 +64,4 @@ var PersonService = {
     }
 };
 module.exports = PersonService;
+//# sourceMappingURL=person-service.js.map

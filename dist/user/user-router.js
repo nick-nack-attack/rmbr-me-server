@@ -1,29 +1,35 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // user router
-var _a = require('express'), json = _a.json, Router = _a.Router;
-var jsonBodyParser = json();
-var userRouter = Router();
-var path = require('path');
-var format = require('date-fns').format;
+const express_1 = require("express");
+const path_1 = __importDefault(require("path"));
+const date_fns_1 = require("date-fns");
 // service
-var UserService = require('./user-service');
+const user_service_1 = __importDefault(require("./user-service"));
+const userRouter = express_1.Router();
+const jsonBodyParser = express_1.json();
 // for posting new users (i.e. sign up)
 userRouter
-    .post('/', jsonBodyParser, function (req, res, next) {
+    .route('/')
+    .get((req, res, next) => {
+})
+    .post(jsonBodyParser, (req, res, next) => {
     // set variables
-    var userLogin = {
+    const userLogin = {
         user_name: req.body.user_name,
         password: req.body.password
     };
     // check for missing values
-    for (var _i = 0, _a = Object.entries(userLogin); _i < _a.length; _i++) {
-        var _b = _a[_i], key = _b[0], value = _b[1];
+    for (const [key, value] of Object.entries(userLogin))
         if (value === undefined || value === null)
             return res.status(400).json({
-                error: "Missing '" + key + "' in request body"
+                error: `Missing '${key}' in request body`
             });
-    }
     // check to see if password passes validation
-    var passwordError = UserService.validatePassword(userLogin.password);
+    const passwordError = user_service_1.default.validatePassword(userLogin.password);
     if (passwordError)
         return res
             .status(400)
@@ -31,31 +37,32 @@ userRouter
             error: passwordError
         });
     // submit login with service
-    UserService.hasUserWithUserName(req.app.get('db'), userLogin.user_name)
-        .then(function (hasUserWithUserName) {
+    user_service_1.default.hasUserWithUserName(req.app.get('db'), userLogin.user_name)
+        .then((hasUserWithUserName) => {
         // if username is already taken, return error
         if (hasUserWithUserName)
             return res.status(400).json({
-                error: "Username already taken"
+                error: `Username already taken`
             });
-        return UserService.hashPassword(userLogin.password)
-            .then(function (hashedPassword) {
-            var formattedDate = format(new Date(), 'M/dd/yyyy, K:mm:s b');
+        return user_service_1.default.hashPassword(userLogin.password)
+            .then(hashedPassword => {
+            const formattedDate = date_fns_1.format(new Date(), 'M/dd/yyyy, K:mm:s b');
             // create new user object
-            var newUser = {
+            const newUser = {
                 user_name: userLogin.user_name,
                 password: hashedPassword,
                 date_created: formattedDate
             };
             // insert new user into db
-            return UserService.insertUser(req.app.get('db'), newUser)
-                .then(function (user) {
+            return user_service_1.default.insertUser(req.app.get('db'), newUser)
+                .then(user => {
                 res.status(201)
-                    .location(path.posix.join(req.originalUrl, "/" + user.id))
-                    .json(UserService.serializeUser(user));
+                    .location(path_1.default.posix.join(req.originalUrl, `/${user.id}`))
+                    .json(user_service_1.default.serializeUser(user));
             });
         });
     })
         .catch(next);
 });
-module.exports = userRouter;
+exports.default = userRouter;
+//# sourceMappingURL=user-router.js.map

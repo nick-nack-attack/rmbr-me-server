@@ -1,25 +1,39 @@
-require('dotenv').config();
+import * as path from 'path';
+import * as dotenv from 'dotenv';
 
-interface Config {
-    PORT: number | string;
-    NODE_ENV: string;
-    DATABASE_URL: string;
-    TEST_DATABASE_URL: string,
-    JWT_SECRET: string,
-    JWT_EXPIRY: number | string,
-    API_TOKEN: string,
-    ADMIN_PERMISSION: number | string
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+const PORT = process.env.PORT;
+const NODE_ENV = process.env.NODE_ENV;
+const DATABASE_URL = process.env.DATABASE_URL;
+const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL;
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRY = +process.env.JWT_EXPIRY;
+const API_TOKEN = process.env.API_TOKEN;
+const ADMIN_PERMISSION = process.env.ADMIN_PERMISSION;
+
+export {
+  PORT,
+  NODE_ENV,
+  DATABASE_URL,
+  TEST_DATABASE_URL,
+  JWT_SECRET,
+  JWT_EXPIRY,
+  API_TOKEN,
+  ADMIN_PERMISSION,
 };
 
-const config: Config = {
-    PORT: process.env.PORT,
-    NODE_ENV: process.env.NODE_ENV,
-    DATABASE_URL: process.env.DATABASE_URL,
-    TEST_DATABASE_URL: process.env.TEST_DATABASE_URL,
-    JWT_SECRET: process.env.JWT_SECRET,
-    JWT_EXPIRY: process.env.JWT_EXPIRY,
-    API_TOKEN: process.env.API_TOKEN,
-    ADMIN_PERMISSION: process.env.ADMIN_PERMISSION
+/*
+const config = {
+  PORT: process.env.PORT,
+  NODE_ENV: process.env.NODE_ENV,
+  DATABASE_URL: process.env.DATABASE_URL,
+  TEST_DATABASE_URL: process.env.TEST_DATABASE_URL,
+  JWT_SECRET: process.env.JWT_SECRET,
+  JWT_EXPIRY: +process.env.JWT_EXPIRY,
+  API_TOKEN: process.env.API_TOKEN,
+  ADMIN_PERMISSION: process.env.ADMIN_PERMISSION
 };
+*/
 
-export default config;
+// export default config;

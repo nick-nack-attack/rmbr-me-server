@@ -1,59 +1,61 @@
-// rmbr service
-var xss = require('xss');
-var RmbrService = {
-    getAllRmbrs: function (db) {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const xss_1 = __importDefault(require("xss"));
+// import { db, id } from "../"
+const RmbrService = {
+    getAllRmbrs: (db) => {
         return db
             .from('rmbrme_rmbrs')
             .select('*');
     },
-    getById: function (db, id) {
+    getById: (db, id) => {
         return db
             .from('rmbrme_rmbrs')
             .select('*')
             .where('id', id)
             .first();
     },
-    getByUserId: function (db, uid) {
+    getByUserId: (db, uid) => {
         return db
             .from('rmbrme_rmbrs')
             .select('*')
             .where('user_id', uid);
     },
-    insertRmbr: function (db, newRmbr) {
+    insertRmbr: (db, newRmbr) => {
         return db
             .insert(newRmbr)
             .into('rmbrme_rmbrs')
             .returning('*')
-            .then(function (_a) {
-            var rmbr = _a[0];
-            return rmbr;
-        })
-            .then(function (rmbr) {
-            return RmbrService.getById(db, rmbr.id);
-        });
+            .then(([rmbr]) => rmbr)
+            .then((rmbr) => RmbrService.getById(db, rmbr.id));
     },
-    deleteRmbr: function (db, id) {
+    deleteRmbr: (db, id) => {
         return db
             .from('rmbrme_rmbrs')
             .where('id', id)
             .delete();
     },
-    updateRmbr: function (db, id, newRmbrFields) {
+    updateRmbr: (db, id, newRmbrFields) => {
         return db
             .from('rmbrme_rmbrs')
             .where('id', id)
             .update(newRmbrFields);
     },
-    serializeRmbr: function (rmbr) {
+    serializeRmbr: (rmbr) => {
         return {
             id: rmbr.id,
             person_id: rmbr.person_id,
             user_id: rmbr.user_id,
-            rmbr_title: xss(rmbr.rmbr_title),
-            rmbr_text: xss(rmbr.rmbr_text),
+            rmbr_title: xss_1.default(rmbr.rmbr_title),
+            rmbr_text: xss_1.default(rmbr.rmbr_text),
+            category: rmbr.category,
             date_created: rmbr.date_created,
             date_modified: rmbr.date_modified
         };
     }
 };
-module.exports = RmbrService;
+exports.default = RmbrService;
+//# sourceMappingURL=rmbr-service.js.map

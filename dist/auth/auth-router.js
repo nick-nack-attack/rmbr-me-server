@@ -1,27 +1,25 @@
 // authentication router
-var express = require('express');
-var requireAuth = require('../middleware/jwt-auth').requireAuth;
-var jsonBodyParser = express.json();
-var authRouter = express.Router();
+const express = require('express');
+const { requireAuth } = require('../middleware/jwt-auth');
+const jsonBodyParser = express.json();
+const authRouter = express.Router();
 // service
-var AuthService = require('./auth-service');
+const AuthService = require('./auth-service');
 authRouter
-    .post('/login', jsonBodyParser, function (req, res, next) {
-    var _a = req.body, user_name = _a.user_name, password = _a.password;
-    var loginUser = { user_name: user_name, password: password };
+    .post('/login', jsonBodyParser, (req, res, next) => {
+    const { user_name, password } = req.body;
+    const loginUser = { user_name, password };
     // verify user_name and email are in the request body
-    for (var _i = 0, _b = Object.entries(loginUser); _i < _b.length; _i++) {
-        var _c = _b[_i], key = _c[0], value = _c[1];
+    for (const [key, value] of Object.entries(loginUser))
         // if one is missing, return error and key missing
         if (value == null)
             return res
                 .status(400)
                 .json({
-                error: "Missing '" + key + "' in request body"
+                error: `Missing '${key}' in request body`
             });
-    }
     AuthService.getUserWithUsername(req.app.get('db'), loginUser.user_name)
-        .then(function (dbUser) {
+        .then(dbUser => {
         // if the user doesn't exist, return error
         if (!dbUser)
             return res
@@ -30,7 +28,7 @@ authRouter
                 error: 'Incorrect username or password'
             });
         return AuthService.comparePasswords(loginUser.password, dbUser.password)
-            .then(function (compareMatch) {
+            .then(compareMatch => {
             // if request body password and db password don't match, return error
             if (!compareMatch)
                 return res
@@ -40,12 +38,12 @@ authRouter
                 });
             // try creating jwt and returning it to user
             try {
-                var sub = dbUser.user_name;
-                var payload = { user_id: dbUser.id };
-                var user_id = dbUser.id;
+                const sub = dbUser.user_name;
+                const payload = { user_id: dbUser.id };
+                const user_id = dbUser.id;
                 res.send({
                     authToken: AuthService.createJwt(sub, payload),
-                    user_id: user_id
+                    user_id
                 });
             }
             catch (err) {
@@ -58,24 +56,25 @@ authRouter
         });
     })
         // handle an error not already handled
-        .catch(function () {
+        .catch(() => {
         res
             .send(500)
             .json({
-            error: "Couldn't create token"
+            error: `Couldn't create token`
         });
         next();
     });
 });
 // refresh client token
 authRouter
-    .post('/refresh', requireAuth, function (req, res) {
-    var sub = req.user.user_name;
-    var payload = { user_id: req.user.id };
-    var user_id = payload.user_id;
+    .post('/refresh', requireAuth, (req, res) => {
+    const sub = req.user.user_name;
+    const payload = { user_id: req.user.id };
+    const user_id = payload.user_id;
     res.send({
         authToken: AuthService.createJwt(sub, payload),
-        user_id: user_id
+        user_id
     });
 });
-module.exports = authRouter;
+exports = authRouter;
+//# sourceMappingURL=auth-router.js.map

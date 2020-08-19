@@ -1,19 +1,20 @@
 // user router
-import { Router, json } from 'express';
-const userRouter = Router();
-const jsonBodyParser = json();
+import {json, Router} from 'express';
 import path from 'path';
-import { format }  from 'date-fns';
+import {format} from 'date-fns';
 
 // service
 import UserService from './user-service';
 
+const userRouter = Router();
+const jsonBodyParser = json();
+
 // for posting new users (i.e. sign up)
 userRouter
-    .route('/')
-    .get((req, res, next) => {
+  .route('/')
+  .get((req, res, next) => {
 
-    })
+  })
   .post(jsonBodyParser, (req, res, next) => {
     // set variables
     const userLogin = {
@@ -21,11 +22,11 @@ userRouter
       password: req.body.password
     };
     // check for missing values
-    for (const [key,value] of Object.entries(userLogin))
-            if (value === undefined || value === null)
-              return res.status(400).json({
-                    error: `Missing '${key}' in request body`
-                });
+    for (const [key, value] of Object.entries(userLogin))
+      if (value === undefined || value === null)
+        return res.status(400).json({
+          error: `Missing '${key}' in request body`
+        });
     // check to see if password passes validation
     const passwordError = UserService.validatePassword(userLogin.password);
     if (passwordError)
@@ -36,15 +37,17 @@ userRouter
         });
     // submit login with service
     UserService.hasUserWithUserName(
-        req.app.get('db'),
-        userLogin.user_name
-      )
-      .then((hasUserWithUserName: any) => {
+      req.app.get('db'),
+      userLogin.user_name
+    )
+      .then((hasUserWithUserName) => {
         // if username is already taken, return error
-        if (hasUserWithUserName)
-          return res.status(400).json({
+        if (hasUserWithUserName) {
+          res.status(400).json({
             error: `Username already taken`
           });
+          return;
+        }
         return UserService.hashPassword(userLogin.password)
           .then(hashedPassword => {
             const formattedDate = format(new Date(), 'M/dd/yyyy, K:mm:s b');
