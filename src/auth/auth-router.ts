@@ -13,7 +13,6 @@ authRouter
 
     const {user_name, password} = req.body;
     const loginUser = {user_name, password};
-    //console.log(`here is the req`, req)
 
     // verify user_name and email are in the request body
     for (const [key, value] of Object.entries(loginUser))
@@ -31,6 +30,7 @@ authRouter
     )
       .then(dbUser => {
         // if the user doesn't exist, return error
+        console.log('here is the database user', dbUser)
         if (!dbUser)
           return res
             .status(400)
@@ -67,12 +67,8 @@ authRouter
           })
       })
       // handle an error not already handled
-      .catch(() => {
-        res
-          .send(500)
-          .json({
-            error: `Couldn't create token`
-          })
+      .catch((err) => {
+        console.log(err)
         next();
       })
   });

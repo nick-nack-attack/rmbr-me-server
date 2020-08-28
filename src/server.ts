@@ -1,5 +1,5 @@
 // tslint:disable-next-line:no-var-requires
-import * as config from './config';
+import {NODE_ENV, PORT} from './config';
 
 // middleware and configuration
 import express from "express";
@@ -17,7 +17,7 @@ import {db} from "./database/connect";
 
 // main express root
 const app = express();
-const morganOption = (config.NODE_ENV === 'production')
+const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
 
@@ -41,7 +41,7 @@ app.use("/api/user", userRouter);
 // define error handler
 const errorHandler = (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   let response;
-  if (config.NODE_ENV === 'production') {
+  if (NODE_ENV === 'production') {
     response = {
       error: {
         message: 'server error'
@@ -60,6 +60,6 @@ const errorHandler = (err: any, req: express.Request, res: express.Response, nex
 // use error handler
 app.use(errorHandler);
 
-app.listen(config.PORT, () => {
-  console.log(`Server listening at http://localhost:${config.PORT}`)
+app.listen(PORT, () => {
+  console.log(`Server listening at http://localhost:${PORT}`)
 })

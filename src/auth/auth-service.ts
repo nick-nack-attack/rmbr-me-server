@@ -1,5 +1,5 @@
 // authentication service
-import {db} from "../database/connect";
+
 
 const config = require('../config');
 import Knex from 'knex';
@@ -18,9 +18,10 @@ const AuthService = {
   },
 
   comparePasswords: (password, hash) => {
-    return bcrypt
-      .compare(password, hash)
-
+    return (
+      bcrypt
+        .compare(password, hash)
+    )
   },
 
   createJwt: (subject, payload) => {
