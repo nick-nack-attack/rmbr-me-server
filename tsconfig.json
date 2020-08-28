@@ -6,7 +6,6 @@
     "sourceMap": true,
     "target": "es6",
     "resolveJsonModule": true,
-    "outDir": "./dist",
     "allowJs": true,
     "esModuleInterop": true,
     "lib": [

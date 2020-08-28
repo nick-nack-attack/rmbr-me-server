@@ -16,7 +16,7 @@ function requireAuth(req, res, next) {
         .status(401)
         .json({error: 'Missing bearer token'})
   } else {
-    // slice off 'beaer ' from the token
+    // slice off 'bearer ' from the token
     bearerToken = authToken.slice(7, authToken.length)
   }
   ;

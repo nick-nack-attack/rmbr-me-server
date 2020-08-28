@@ -1,17 +1,19 @@
 // authentication router
 import express from 'express';
 import requireAuth from '../middleware/jwt-auth';
+import {db} from "../database/connect";
 const jsonBodyParser = express.json();
 const authRouter = express.Router();
 
 // service
-const AuthService = require('./auth-service');
+import AuthService from './auth-service';
 
 authRouter
   .post('/login', jsonBodyParser, (req, res, next) => {
 
     const {user_name, password} = req.body;
     const loginUser = {user_name, password};
+    //console.log(`here is the req`, req)
 
     // verify user_name and email are in the request body
     for (const [key, value] of Object.entries(loginUser))
@@ -24,7 +26,7 @@ authRouter
           })
 
     AuthService.getUserWithUsername(
-      req.app.get('db'),
+      req['db'],
       loginUser.user_name
     )
       .then(dbUser => {

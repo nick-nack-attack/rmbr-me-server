@@ -1,12 +1,13 @@
 const xss = require('../../node_modules/xss');
+import Knex from 'knex';
 
 const PersonService = {
-  getAllPersons: (db: any) => {
+  getAllPersons: (db: Knex) => {
     return db
         .from('rmbrme_people')
         .select('*')
   },
-  getPersonById: (db: any, id: number) => {
+  getPersonById: (db: Knex, id: number) => {
     return PersonService.getAllPersons(db)
         .where('id', id)
         .first()

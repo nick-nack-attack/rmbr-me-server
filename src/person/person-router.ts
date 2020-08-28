@@ -7,10 +7,10 @@ import * as path from "path";
 import PersonService from "./person-service";
 
 import requireAuth from "../middleware/jwt-auth";
+import { ADMIN_PERMISSION } from "../config";
 
 const jsonParser = json();
 const personRouter = Router();
-const config = require('../config');
 
 
 // all endpoints require authentication
@@ -171,7 +171,7 @@ async function checkPersonExists(req, res, next) {
 
 async function checkPermission(req, res, next) {
   try {
-    if (req.user.role != config.ADMIN_PERMISSION)
+    if (req.user.role != ADMIN_PERMISSION)
       return res.status(401).json({
         error: `Unauthorized`
       });
