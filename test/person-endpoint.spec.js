@@ -1,6 +1,7 @@
-const app = require('../src/app')
-const knex = require('knex')
-const helpers = require('./test-helpers')
+const app = require('../src/server.ts');
+const knex = require('knex');
+const helpers = require('./test-helpers');
+const describe = require("mocha");
 
 describe('Person Endpoint', () => {
 

@@ -1,33 +1,32 @@
-const bcrypt = require('bcryptjs')
-const xss = require('xss')
-
-const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/
+// service for user router
+import bcrypt from 'bcryptjs';
+import xss from 'xss';
+import Knex from 'knex';
+// variable for special characters
+const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
 const UserService = {
-
-  hasUserWithUserName(db, user_name) {
+  hasUserWithUserName: async (db: Knex, user_name: string) => {
     return db('rmbrme_users')
-      .where({ user_name })
+      .where({user_name})
       .first()
       .then(user => !!user)
   },
-
-  insertUser(db, newUser) {
+  insertUser: async (db: Knex, newUser: { password: string; user_name: any; date_created: string }) => {
     return db
       .insert(newUser)
       .into('rmbrme_users')
       .returning('*')
       .then(([user]) => user)
   },
-
-  validatePassword(password) {
+  validatePassword: (password: string) => {
     if (password.length < 8) {
       return 'Password must be longer than 8 characters'
     }
     if (password.length > 72) {
       return 'Password must be less than 72 characters'
     }
-    if (password.startsWith(' ') || password.endsWith(' ') ) {
+    if (password.startsWith(' ') || password.endsWith(' ')) {
       return 'Password must not start or end with empty spaces'
     }
     if (!REGEX_UPPER_LOWER_NUMBER_SPECIAL.test(password)) {
@@ -35,19 +34,17 @@ const UserService = {
     }
     return null
   },
-
-  hashPassword(password) {
+  hashPassword: (password: string) => {
     return bcrypt.hash(password, 12)
   },
-
-  serializeUser(user) {
+  serializeUser: (user) => {
+    const {user_name} = user;
     return {
       id: user.id,
-      user_name: xss(user.user_name),
+      user_name: xss.filterXSS(user_name),
       date_created: new Date(user.date_created)
     }
   },
+};
 
-}
-
-module.exports = UserService
+export default UserService;

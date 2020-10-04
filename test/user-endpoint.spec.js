@@ -1,7 +1,7 @@
-const knex = require('knex')
-const bcrypt = require('bcryptjs')
-const app = require('../src/app')
-const helpers = require('./test-helpers')
+const knex = require('knex');
+const bcrypt = require('bcryptjs');
+const app = require('../src/server.ts');
+const helpers = require('./test-helpers');
 
 describe('user endpoint', function() {
 
