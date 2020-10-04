@@ -4,7 +4,7 @@ module.exports = {
     filename: "./dist/bundle.js",
   },
 
-  // Enable sourcemaps for debugging webpack's output.
+  // Enable sourcemaps for debugging webpack output.
   devtool: "source-map",
 
   resolve: {

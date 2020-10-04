@@ -1,5 +1,5 @@
 // authentication service
-
+import {db} from '../database/connect';
 
 const config = require('../config');
 import Knex from 'knex';
@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 
 const AuthService = {
 
-  getUserWithUsername: (db: Knex, user_name: any) => {
+  getUserWithUsername: (user_name: any) => {
     return db
       .from('rmbrme_users')
       .where({user_name})
@@ -37,6 +37,7 @@ const AuthService = {
   },
 
   verifyJwt: (token) => {
+    console.log(token, config.JWT_SECRET)
     return jwt.verify(token, config.JWT_SECRET,
       {
         algorithms: ['HS256']

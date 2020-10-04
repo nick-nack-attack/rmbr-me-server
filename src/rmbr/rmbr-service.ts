@@ -1,47 +1,43 @@
-import * as xss from "xss";
+import * as xss from 'xss';
 import type * as Knex from 'knex';
-// import { db, id } from "../"
-
-function foo(bar: object, baz: string) {
-  // does whatever it wants!
-}
+import { db } from '../database/connect';
 
 const RmbrService = {
-  getAllRmbrs: (db: Knex) => {
+  getAllRmbrs: () => {
     return db
       .from('rmbrme_rmbrs')
       .select('*')
   },
-  getById: (db: Knex, id: number|string) => {
+  getById: (id: number|string) => {
     return db
       .from('rmbrme_rmbrs')
       .select('*')
       .where('id', id)
       .first()
   },
-  getByUserId: (db: Knex, uid: number) => {
+  getByUserId: (uid: number) => {
     return db
       .from('rmbrme_rmbrs')
       .select('*')
       .where('user_id', uid)
   },
-  insertRmbr: (db: Knex, newRmbr: object) => {
+  insertRmbr: (newRmbr: object) => {
     return db
       .insert(newRmbr)
       .into('rmbrme_rmbrs')
       .returning('*')
       .then(([rmbr]: any) => rmbr)
       .then((rmbr: any) =>
-        RmbrService.getById(db, rmbr.id)
+        RmbrService.getById(rmbr.id)
       )
   },
-  deleteRmbr: (db, id) => {
+  deleteRmbr: (id) => {
     return db
       .from('rmbrme_rmbrs')
       .where('id', id)
       .delete()
   },
-  updateRmbr: (db, id, newRmbrFields) => {
+  updateRmbr: (id, newRmbrFields) => {
     return db
       .from('rmbrme_rmbrs')
       .where('id', id)

@@ -15,7 +15,6 @@ rmbrRouter
   .all(requireAuth)
   .get((req, res, next) => {
     RmbrService.getAllRmbrs(
-      req.app.get('db')
     )
       .then(rbr => {
         res.json(rbr.map(RmbrService.serializeRmbr))
@@ -31,7 +30,6 @@ rmbrRouter
           error: `Missing ${key} in request`
         });
     RmbrService.insertRmbr(
-      req.app.get('db'),
       newRmbr
     )
       .then(rmbr => {
@@ -56,7 +54,6 @@ rmbrRouter
     const {rmbr_id} = req.params;
     RmbrService
       .deleteRmbr(
-        req.app.get('db'),
         rmbr_id
       )
       .then(() => {
@@ -80,12 +77,11 @@ rmbrRouter
     }
     ;
     RmbrService.updateRmbr(
-      req.app.get('db'),
       req.params.rmbr_id,
       rmbrToUpdate
     )
       .then(() => {
-        RmbrService.getAllRmbrs(req.app.get('db'))
+        RmbrService.getAllRmbrs()
           .then(rbr => {
             res
               .json(rbr.map(RmbrService.serializeRmbr))
@@ -101,7 +97,6 @@ rmbrRouter
   .all(requireAuth)
   .get((req, res, next) => {
     RmbrService.getByUserId(
-      req['db'],
       +req.params.user_id
     )
       .then(rbr => {
@@ -114,7 +109,6 @@ rmbrRouter
 async function checkRmbrExists(req: Request, res: Response, next: NextFunction) {
   try {
     const rmbr = await RmbrService.getById(
-      req.app.get('db'),
       Number(req.params.rmbr_id)
     )
     if (!rmbr)

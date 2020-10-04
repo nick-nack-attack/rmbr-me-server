@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({path: path.join(__dirname, '../.env')});
 
 const PORT = process.env.PORT;
 const NODE_ENV = process.env.NODE_ENV;
@@ -22,18 +22,3 @@ export {
   API_TOKEN,
   ADMIN_PERMISSION,
 };
-
-/*
-const config = {
-  PORT: process.env.PORT,
-  NODE_ENV: process.env.NODE_ENV,
-  DATABASE_URL: process.env.DATABASE_URL,
-  TEST_DATABASE_URL: process.env.TEST_DATABASE_URL,
-  JWT_SECRET: process.env.JWT_SECRET,
-  JWT_EXPIRY: +process.env.JWT_EXPIRY,
-  API_TOKEN: process.env.API_TOKEN,
-  ADMIN_PERMISSION: process.env.ADMIN_PERMISSION
-};
-*/
-
-// export default config;

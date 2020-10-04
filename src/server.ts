@@ -12,8 +12,7 @@ import personRouter from "./person/person-router";
 import rmbrRouter from "./rmbr/rmbr-router";
 import authRouter from "./auth/auth-router";
 import userRouter from "./user/user-router";
-import { addDbMiddleware } from "./middleware/add-db";
-import {db} from "./database/connect";
+import {addDbMiddleware} from "./middleware/add-db";
 
 // main express root
 const app = express();

@@ -25,7 +25,6 @@ authRouter
           })
 
     AuthService.getUserWithUsername(
-      req['db'],
       loginUser.user_name
     )
       .then(dbUser => {

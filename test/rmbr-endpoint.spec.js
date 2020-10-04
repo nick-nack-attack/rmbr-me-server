@@ -1,4 +1,4 @@
-const app = require('../src/app');
+const app = require('../src/server.ts');
 const knex = require('knex');
 const helpers = require('./test-helpers');
 
