@@ -1,6 +1,6 @@
-const app = require('../src/server.ts');
-const knex = require('knex');
-const helpers = require('./test-helpers');
+import app from '../src/server.ts';
+import knex from 'knex';
+import helpers from './test-helpers';
 
 describe(`rmbr endpoint`, () => {
     let db;
@@ -24,7 +24,7 @@ describe(`rmbr endpoint`, () => {
     afterEach(`truncate database and restart identities`, () => { return helpers.cleanTables(db) });
 
     describe(`GET /api/rmbr`, () => {
-        
+
         context(`empty rmbr table`, () => {
 
             beforeEach('seed db', () => {

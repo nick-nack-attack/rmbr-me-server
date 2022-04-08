@@ -1,5 +1,5 @@
-const xss = require('../../node_modules/xss');
-import Knex from 'knex';
+import xss from 'xss';
+import * as Knex from 'knex';
 
 const PersonService = {
   getAllPersons: (db: Knex) => {

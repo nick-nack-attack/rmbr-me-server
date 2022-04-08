@@ -1,6 +1,6 @@
-const app = require('../src/server.ts');
-const knex = require('knex');
-const helpers = require('./test-helpers');
+import app from '../src/server.ts';
+import knex from 'knex';
+import helpers from './test-helpers';
 
 describe('protected endpoint', () => {
     let db;
@@ -18,7 +18,7 @@ describe('protected endpoint', () => {
     beforeEach(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
     afterEach(`truncate database and restart identities`, () => { helpers.cleanTables(db) });
 
-    beforeEach('seed db', () => 
+    beforeEach('seed db', () =>
         helpers.seedTables(
             db,
             testUserArray,
@@ -112,7 +112,7 @@ describe('protected endpoint', () => {
                         error: `Unauthorized request`
                     })
             });
-            
+
         });
     });
 });
