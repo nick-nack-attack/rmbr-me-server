@@ -1,4 +1,4 @@
-const app = require('../src/server')
+import app from '../src/server';
 
 describe('App tests', () => {
     it(`GET / responds with 200 containing 'Server's buns are buttered'`, () => {
