@@ -1,7 +1,7 @@
-const app = require('../src/server.ts');
-const knex = require('knex');
-const helpers = require('./test-helpers');
-const describe = require("mocha");
+import app from '../src/server.ts';
+import knex from 'knex';
+import helpers from './test-helpers';
+import describe from "mocha";
 
 describe('Person Endpoint', () => {
 
@@ -85,7 +85,7 @@ describe('Person Endpoint', () => {
 
     context(`empty person table in database`, () => {
 
-      beforeEach('seed db', () => 
+      beforeEach('seed db', () =>
         helpers.seedTables(
           db,
           testUserArray,
@@ -126,13 +126,13 @@ describe('Person Endpoint', () => {
             .get(`/api/person/${person_id}`)
             .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
             .expect(200, expectedPerson)
-        );  
+        );
       });
     });
   });
 
   describe(`POST /api/person`, () => {
-    
+
     context(`empty person table in database`, () => {
 
       beforeEach('seed db', () => {
@@ -334,5 +334,5 @@ describe('Person Endpoint', () => {
     });
 
   });
-  
+
 })
