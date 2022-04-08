@@ -1,5 +1,4 @@
 import * as xss from 'xss';
-import type * as Knex from 'knex';
 import { db } from '../database/connect';
 
 const RmbrService = {

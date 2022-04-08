@@ -1,7 +1,6 @@
 {
   "name": "rmbrme-server",
   "version": "1.0.0",
-  "type": "module",
   "description": "App to help people remember things about their friends and family",
   "main": "src/server.ts",
   "scripts": {
