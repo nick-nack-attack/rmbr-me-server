@@ -1,7 +1,7 @@
 // All tests
-require('./app.spec');
-require('./auth-endpoint.spec');
-require('./user-endpoint.spec');
-require('./protected-endpoint.spec');
-require('./person-endpoint.spec');
-require('./rmbr-endpoint.spec');
+import './app.spec';
+import './auth-endpoint.spec';
+import './user-endpoint.spec';
+import './protected-endpoint.spec';
+import './person-endpoint.spec';
+import './rmbr-endpoint.spec';
