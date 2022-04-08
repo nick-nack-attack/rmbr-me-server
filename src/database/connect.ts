@@ -1,7 +1,7 @@
 import { DATABASE_URL } from '../config';
 
 // utilities
-import knex from 'knex';
+import * as knex from 'knex';
 
 // database
 export const db = knex({
