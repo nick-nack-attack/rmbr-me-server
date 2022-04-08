@@ -1,6 +1,6 @@
 // user router
 import {json, Router} from 'express';
-import path from 'path';
+import * as path from 'path';
 import {format} from 'date-fns';
 
 // service

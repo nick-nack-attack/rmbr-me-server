@@ -1,7 +1,7 @@
-const knex = require('knex');
-const bcrypt = require('bcryptjs');
-const app = require('../src/server.ts');
-const helpers = require('./test-helpers');
+import app from '../src/server.ts';
+import knex from 'knex';
+import helpers from './test-helpers';
+import bcrypt from 'bcryptjs';
 
 describe('user endpoint', function() {
 
@@ -47,13 +47,13 @@ describe('user endpoint', function() {
                 it(`responds with 400 required error when '${field}' is missing`, () => {
 
                     delete registerAttemptBody[field]
-    
+
                     return supertest(app)
                         .post('/api/user')
                         .send(registerAttemptBody)
                         .expect(400, { error: `Missing '${field}' in request body`})
-                        
-    
+
+
                 })
 
                 it(`responds 400 'Password must be longer than 8 characters' when empty password`, () => {

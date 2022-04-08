@@ -1,8 +1,8 @@
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 // Truncate all tables and restart identities for database
-function cleanTables(db) {
+export function cleanTables(db) {
     return db.transaction(trx =>
         trx.raw(
             `TRUNCATE
@@ -21,10 +21,10 @@ function cleanTables(db) {
             ])
         )
     );
-};
+}
 
 // Create dummy user
-function makeUserArray() {
+export function makeUserArray() {
     return [
         {
             id: 1,
@@ -45,7 +45,7 @@ function makeUserArray() {
 }
 
 // Create dummy people
-function makePersonArray(user) {
+export function makePersonArray(user) {
     return [
         {
             id: 1,
@@ -81,7 +81,7 @@ function makePersonArray(user) {
 }
 
 // Create dummy rmbr
-function makeRmbrArray(users, people) {
+export function makeRmbrArray(users, people) {
     return [
         {
             id: 1,
@@ -140,7 +140,7 @@ function makeRmbrArray(users, people) {
     ];
 }
 
-function seedTables(db, user, person, rmbr) {
+export function seedTables(db, user, person, rmbr) {
 
     return db.transaction(async trx => {
 
@@ -176,7 +176,7 @@ function seedTables(db, user, person, rmbr) {
 
 }
 
-function makeExpectedPerson(person) {
+export function makeExpectedPerson(person) {
     return {
         id: person.id,
         person_name: person.person_name,
@@ -190,7 +190,7 @@ function makeExpectedPerson(person) {
 
 }
 
-function makeExpectedRmbr(rmbr) {
+export function makeExpectedRmbr(rmbr) {
 
     return {
         id: rmbr.id,
@@ -203,7 +203,7 @@ function makeExpectedRmbr(rmbr) {
     }
 };
 
-function makeMaliciousRmbr(person) {
+export function makeMaliciousRmbr(person) {
 
     const maliciousRmbr = {
         id: 911,
@@ -219,13 +219,13 @@ function makeMaliciousRmbr(person) {
         rmbr_title: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
         rmbr_text: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
     };
-    return { 
-        maliciousRmbr, 
-        expectedRmbr 
+    return {
+        maliciousRmbr,
+        expectedRmbr
     };
 }
 
-function makeFixtures() {
+export function makeFixtures() {
     const testUserArray = makeUserArray();
     const testPersonArray = makePersonArray(testUserArray);
     const testRmbrArray = makeRmbrArray(testUserArray, testPersonArray);
@@ -236,7 +236,7 @@ function makeFixtures() {
     };
 }
 
-function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+export function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     const token = jwt.sign(
         { user_id: user.id },
         secret,
@@ -247,16 +247,3 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     );
     return `Bearer ${token}`;
 }
-
-module.exports = {
-    makeAuthHeader,
-    makeFixtures,
-    cleanTables,
-    seedTables,
-    makeUserArray,
-    makePersonArray,
-    makeRmbrArray,
-    makeExpectedPerson,
-    makeExpectedRmbr,
-    makeMaliciousRmbr,
-};

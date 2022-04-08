@@ -4,8 +4,12 @@
     "tslint:recommended"
   ],
   "jsRules": {},
+  "plugins": ["import"],
   "rules": {
-    "trailing-comma": [ false ]
+    "trailing-comma": [ false ],
+    "import/no-unresolved": 2,
+    "import/no-commonjs": 2,
+    "import/extensions": [2, "ignorePackages"]
   },
   "rulesDirectory": []
 }

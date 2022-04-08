@@ -1,7 +1,8 @@
 // service for user router
-import bcrypt from 'bcryptjs';
-import xss from 'xss';
-import Knex from 'knex';
+import * as bcrypt from 'bcryptjs';
+import * as xss from 'xss';
+import * as Knex from 'knex';
+
 // variable for special characters
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
