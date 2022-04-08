@@ -1,7 +1,6 @@
 // authentication router
-import express from 'express';
+import * as express from 'express';
 import requireAuth from '../middleware/jwt-auth';
-import {db} from "../database/connect";
 const jsonBodyParser = express.json();
 const authRouter = express.Router();
 
