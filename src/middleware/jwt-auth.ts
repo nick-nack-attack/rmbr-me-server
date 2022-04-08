@@ -1,16 +1,16 @@
-import express from 'express';
-// jwt authentication 
-const {default: AuthService} = require('../auth/auth-service');
+// jwt authentication
+import AuthService from '../auth/auth-service';
 
 /**
  * Gets the token from the request and turns it into a user object, saving it to the `req.user` property
- * @param {express.Request} req the Express request
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req the Express request
+ * @param {Response} res
+ * @param {NextFunction} next
  */
 function requireAuth(req, res, next) {
   const authToken = req.get('Authorization') || '';
   let bearerToken;
+
   if (!authToken.toLowerCase().startsWith('bearer ')) {
     return res
       .status(401)
@@ -19,13 +19,11 @@ function requireAuth(req, res, next) {
     // slice off 'bearer ' from the token
     bearerToken = authToken.slice(7, authToken.length)
   }
-  ;
+
   try {
-    console.log(AuthService)
-    const payload = AuthService.verifyJwt(bearerToken)
-    AuthService.getUserWithUsername(
-      payload.sub
-    )
+    const payload = AuthService.verifyJwt(bearerToken);
+
+    AuthService.getUserWithUsername(payload.sub)
       .then(user => {
         if (!user)
           return res
@@ -46,7 +44,6 @@ function requireAuth(req, res, next) {
         error: 'Unauthorized request'
       })
   }
-  ;
-};
+}
 
 export default requireAuth;
