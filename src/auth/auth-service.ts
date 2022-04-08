@@ -1,15 +1,12 @@
 // authentication service
 import {db} from '../database/connect';
-
-const config = require('../config');
-import Knex from 'knex';
+import { JWT_SECRET, JWT_EXPIRY } from '../config';
 
 // utils
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import * as bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const AuthService = {
-
   getUserWithUsername: (user_name: any) => {
     return db
       .from('rmbrme_users')
@@ -27,18 +24,18 @@ const AuthService = {
   createJwt: (subject, payload) => {
     return jwt.sign(
       payload,
-      config.JWT_SECRET,
+      JWT_SECRET,
         {
           subject,
-          expiresIn: config.JWT_EXPIRY,
+          expiresIn: JWT_EXPIRY,
           algorithm: 'HS256'
         }
     )
   },
 
   verifyJwt: (token) => {
-    console.log(token, config.JWT_SECRET)
-    return jwt.verify(token, config.JWT_SECRET,
+    console.log(token, JWT_SECRET)
+    return jwt.verify(token, JWT_SECRET,
       {
         algorithms: ['HS256']
       }
