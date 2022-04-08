@@ -1,7 +1,7 @@
-const app = require('../src/server.ts');
-const knex = require('knex');
-const jwt = require('jsonwebtoken');
-const helpers = require('./test-helpers');
+import app from '../src/server.ts';
+import knex from 'knex';
+import helpers from './test-helpers';
+import jwt from 'jsonwebtoken';
 
 describe( 'Auth Endpoint', () => {
     let db;
