@@ -1,44 +1,47 @@
 import xss from 'xss';
 import * as Knex from 'knex';
+import { db } from '../database/connect';
 
 const PersonService = {
-  getAllPersons: (db: Knex) => {
+  getAllPersons: () => {
     return db
         .from('rmbrme_people')
         .select('*')
   },
-  getPersonById: (db: Knex, id: number) => {
-    return PersonService.getAllPersons(db)
+  getPersonById: (id: number) => {
+    return PersonService.getAllPersons()
         .where('id', id)
         .first()
   },
-  getPersonByUserId: (db: any, user_id: number) => {
-    return PersonService.getAllPersons(db)
+  getPersonByUserId: (user_id: number) => {
+    return PersonService.getAllPersons()
         .where('user_id', user_id)
   },
-  insertPerson: (db: any, newPerson: object) => {
+  insertPerson: (newPerson: object) => {
     return db
         .insert(newPerson)
         .into('rmbrme_people')
         .returning('*')
         .then(([person]: any) => person)
         .then((person: any) =>
-            PersonService.getPersonById(db, person.id)
+            PersonService.getPersonById(person.id)
         )
   },
-  deletePerson: (db: any, id: number) => {
+
+  deletePerson: (id: number) => {
     return db
         .from('rmbrme_people')
         .where('id', id)
         .delete()
   },
-  updatePerson: (db: any, id: number, fields: any) => {
+
+  updatePerson: (id: number, fields: any) => {
     return db
         .from('rmbrme_people')
         .where('id', id)
         .update(fields)
-        .then((res: object) =>
-            PersonService.getPersonById(db, id)
+        .then((res) =>
+            PersonService.getPersonById(id)
         )
   },
   serializePerson: (person: any) => {
@@ -62,7 +65,7 @@ const PersonService = {
       person_id: rmbr.person_id
     }
   },
-  getRmbrByPersonId: (db: any, person_id: number) => {
+  getRmbrByPersonId: (person_id: number) => {
     return db
         .from('rmbrme_rmbrs')
         .select('*')
