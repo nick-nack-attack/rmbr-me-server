@@ -15,7 +15,6 @@ const AuthService = {
   },
 
   comparePasswords: (password, hash) => {
-    console.log('Running compare...');
     return bcrypt.compare(password, hash)
   },
 
@@ -36,7 +35,6 @@ const AuthService = {
   },
 
   verifyJwt: (token) => {
-    console.log(token, JWT_SECRET)
     return jwt.verify(token, JWT_SECRET,
       {
         algorithms: ['HS256']
