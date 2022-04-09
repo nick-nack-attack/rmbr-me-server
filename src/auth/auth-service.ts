@@ -14,12 +14,7 @@ const AuthService = {
       .first()
   },
 
-  comparePasswords: (password, hash) => {
-    return (
-      bcrypt
-        .compare(password, hash)
-    )
-  },
+  comparePasswords: (password, hash) => bcrypt.compare(password, hash),
 
   createJwt: (subject, payload) => {
     return jwt.sign(

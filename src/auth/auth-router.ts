@@ -29,13 +29,15 @@ authRouter
       .then(dbUser => {
         // if the user doesn't exist, return error
         console.log('here is the database user', dbUser)
+
         if (!dbUser)
           return res
             .status(400)
             .json({
               error: 'Incorrect username or password'
             })
-        return AuthService.comparePasswords(
+
+        AuthService.comparePasswords(
           loginUser.password, dbUser.password
         )
           .then(compareMatch => {
@@ -46,6 +48,7 @@ authRouter
                 .json({
                   error: 'Incorrect username or password',
                 })
+
             // try creating jwt and returning it to user
             try {
               const sub = dbUser.user_name
