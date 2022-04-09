@@ -9,7 +9,6 @@ import AuthService from './auth-service';
 
 authRouter
   .post('/login', jsonBodyParser, (req, res, next) => {
-
     const {user_name, password} = req.body;
     const loginUser = {user_name, password};
 
@@ -28,8 +27,6 @@ authRouter
     )
       .then(dbUser => {
         // if the user doesn't exist, return error
-        console.log('here is the database user', dbUser)
-
         if (!dbUser)
           return res
             .status(400)
@@ -37,9 +34,7 @@ authRouter
               error: 'Incorrect username or password'
             })
 
-        AuthService.comparePasswords(
-          loginUser.password, dbUser.password
-        )
+        AuthService.comparePasswords(loginUser.password, dbUser.password)
           .then(compareMatch => {
             // if request body password and db password don't match, return error
             if (!compareMatch)
@@ -51,16 +46,16 @@ authRouter
 
             // try creating jwt and returning it to user
             try {
-              const sub = dbUser.user_name
-              const payload = {user_id: dbUser.id}
-              const user_id = dbUser.id
-              res.send({
+              const sub = dbUser.user_name;
+              const payload = {user_id: dbUser.id};
+
+              return res.json({
                 authToken: AuthService.createJwt(sub, payload),
-                user_id
-              })
+                user_id: dbUser.id
+              });
             } catch (err) {
               return res
-                .send(500)
+                .status(500)
                 .json({
                   error: "Couldn't create token"
                 })
