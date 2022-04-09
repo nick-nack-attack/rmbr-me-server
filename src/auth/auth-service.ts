@@ -1,10 +1,10 @@
 // authentication service
 import {db} from '../database/connect';
-import { JWT_SECRET, JWT_EXPIRY } from '../config';
+import {JWT_EXPIRY, JWT_SECRET} from '../config';
 
 // utils
 import * as bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 const AuthService = {
   getUserWithUsername: (user_name: any) => {
@@ -14,18 +14,25 @@ const AuthService = {
       .first()
   },
 
-  comparePasswords: (password, hash) => bcrypt.compare(password, hash),
+  comparePasswords: (password, hash) => {
+    console.log('Running compare...');
+    return bcrypt.compare(password, hash)
+  },
 
   createJwt: (subject, payload) => {
-    return jwt.sign(
-      payload,
-      JWT_SECRET,
+    try {
+      return jwt.sign(
+        payload,
+        JWT_SECRET,
         {
           subject,
           expiresIn: JWT_EXPIRY,
           algorithm: 'HS256'
         }
-    )
+      );
+    } catch (err) {
+      return err;
+    }
   },
 
   verifyJwt: (token) => {
