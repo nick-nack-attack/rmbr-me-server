@@ -68,7 +68,7 @@ personRouter
   .get((req, res, next) => {
     PersonService.getRmbrByPersonId(+req.params.person_id)
       .then(rmbrs => {
-        res.json(rmbrs.map(PersonService.serializeRmbr))
+        res.json(rmbrs)
       })
       .catch(next)
   });
@@ -81,9 +81,7 @@ personRouter
   .get((req, res, next) => {
     PersonService.getPersonById(+req.params.person_id)
       .then((person) => {
-        PersonService.serializePerson(
-          res.json(person)
-        )
+        res.json(person)
       })
       .catch(next)
   })

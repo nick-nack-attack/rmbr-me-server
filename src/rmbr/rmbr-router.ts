@@ -17,7 +17,7 @@ rmbrRouter
     RmbrService.getAllRmbrs(
     )
       .then(rbr => {
-        res.json(rbr.map(RmbrService.serializeRmbr))
+        res.json(rbr)
       })
       .catch(next)
   })
@@ -75,7 +75,7 @@ rmbrRouter
           error: {message: `Request body content requires 'title', 'person id', and 'user id'`}
         })
     }
-    ;
+
     RmbrService.updateRmbr(
       req.params.rmbr_id,
       rmbrToUpdate
@@ -84,7 +84,7 @@ rmbrRouter
         RmbrService.getAllRmbrs()
           .then(rbr => {
             res
-              .json(rbr.map(RmbrService.serializeRmbr))
+              .json(rbr)
               .status(204)
               .end()
           })
@@ -100,7 +100,7 @@ rmbrRouter
       +req.params.user_id
     )
       .then(rbr => {
-        res.json(rbr.map(RmbrService.serializeRmbr))
+        res.json(rbr)
       })
       .catch(next)
   })
@@ -112,7 +112,8 @@ async function checkRmbrExists(req: Request, res: Response, next: NextFunction) 
       Number(req.params.rmbr_id)
     )
     if (!rmbr)
-      return res.status(404).json({
+      return res.status(404)
+        .json({
         error: `Rmbr doesn't exist`
       })
     // if the rmbr exists, continue
