@@ -1,5 +1,4 @@
 import xss from 'xss';
-import * as Knex from 'knex';
 import { db } from '../database/connect';
 
 const PersonService = {
