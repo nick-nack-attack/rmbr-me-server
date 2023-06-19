@@ -1,25 +1,27 @@
 // service for user router
 import * as bcrypt from 'bcryptjs';
 import * as xss from 'xss';
-import * as Knex from 'knex';
+import { db } from "../database/connect";
 
 // variable for special characters
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
 const UserService = {
-  hasUserWithUserName: async (db: Knex, user_name: string) => {
-    return db('rmbrme_users')
-      .where({user_name})
+  hasUserWithUserName: async (user_name: string) => {
+    return db('users')
+      .where({ user_name })
       .first()
       .then(user => !!user)
   },
-  insertUser: async (db: Knex, newUser: { password: string; user_name: any; date_created: string }) => {
+
+  insertUser: async (newUser: { password: string; user_name: any; date_created: string }) => {
     return db
       .insert(newUser)
-      .into('rmbrme_users')
+      .into('users')
       .returning('*')
       .then(([user]) => user)
   },
+
   validatePassword: (password: string) => {
     if (password.length < 8) {
       return 'Password must be longer than 8 characters'

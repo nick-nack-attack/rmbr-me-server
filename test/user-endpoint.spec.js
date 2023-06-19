@@ -146,7 +146,7 @@ describe('user endpoint', function() {
                           })
                           .expect(res =>
                             db
-                              .from('rmbrme_users')
+                              .from('users')
                               .select('*')
                               .where({ id: res.body.id })
                               .first()

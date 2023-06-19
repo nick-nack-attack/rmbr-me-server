@@ -1,6 +1,13 @@
 // jwt authentication
 import AuthService from '../auth/auth-service';
 
+export interface IJwtPayload {
+    user_id: number;
+    iat: number;
+    exp: number;
+    sub: string;
+}
+
 /**
  * Gets the token from the request and turns it into a user object, saving it to the `req.user` property
  * @param {Request} req the Express request
@@ -21,10 +28,10 @@ function requireAuth(req, res, next) {
   }
 
   try {
-    const payload = AuthService.verifyJwt(bearerToken);
+    const payload: IJwtPayload = AuthService.verifyJwt(bearerToken);
 
     AuthService.getUserWithUsername(payload.sub)
-      .then(user => {
+      .then((user) => {
         if (!user)
           return res
             .status(401)

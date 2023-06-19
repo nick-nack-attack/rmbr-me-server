@@ -1,6 +1,7 @@
-CREATE TABLE rmbrme_users (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    user_name TEXT NOT NULL UNIQUE, 
+    role INTEGER NOT NULL DEFAULT 1,
+    user_name TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     date_created TIMESTAMPTZ NOT NULL DEFAULT now()
 );

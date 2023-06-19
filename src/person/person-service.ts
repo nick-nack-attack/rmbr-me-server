@@ -1,10 +1,11 @@
 import xss from 'xss';
 import { db } from '../database/connect';
+import {IPerson} from "./types";
 
 const PersonService = {
   getAllPersons: () => {
     return db
-        .from('rmbrme_people')
+        .from('people')
         .select('*')
   },
   getPersonById: (id: number) => {
@@ -19,7 +20,7 @@ const PersonService = {
   insertPerson: (newPerson: object) => {
     return db
         .insert(newPerson)
-        .into('rmbrme_people')
+        .into('people')
         .returning('*')
         .then(([person]: any) => person)
         .then((person: any) =>
@@ -29,14 +30,14 @@ const PersonService = {
 
   deletePerson: (id: number) => {
     return db
-        .from('rmbrme_people')
+        .from('people')
         .where('id', id)
         .delete()
   },
 
   updatePerson: (id: number, fields: any) => {
     return db
-        .from('rmbrme_people')
+        .from('people')
         .where('id', id)
         .update(fields)
         .then((res) =>
@@ -46,8 +47,8 @@ const PersonService = {
   serializePerson: (person: any) => {
     return {
       id: person.id,
-      person_name: xss(person.person_name),
-      type_of_person: xss(person.type_of_person),
+      name: xss(person.name),
+      category: xss(person.category),
       user_id: person.user_id,
       first_met: person.first_met,
       last_contact: person.last_contact,
@@ -58,15 +59,15 @@ const PersonService = {
   serializeRmbr: (rmbr: any) => {
     return {
       id: rmbr.id,
-      rmbr_title: xss(rmbr.rmbr_title),
+      title: xss(rmbr.title),
       category: rmbr.category,
-      rmbr_text: xss(rmbr.rmbr_text),
+      description: xss(rmbr.description),
       person_id: rmbr.person_id
     }
   },
   getRmbrByPersonId: (person_id: number) => {
     return db
-        .from('rmbrme_rmbrs')
+        .from('rmbrs')
         .select('*')
         .where('person_id', person_id)
   }

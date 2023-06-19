@@ -1,26 +1,25 @@
 BEGIN;
 
 TRUNCATE
-    rmbrme_users,
-    rmbrme_people,
-    rmbrme_rmbrs
-    roles RESTART IDENTITY CASCADE;
+    users,
+    people,
+    rmbrs RESTART IDENTITY CASCADE;
 
-INSERT INTO rmbrme_users (user_name, password, date_created)
-    VALUES 
+INSERT INTO users (user_name, password, date_created)
+    VALUES
         ('jack@gmail.com','$2a$12$lHK6LVpc15/ZROZcKU00QeiD.RyYq5dVlV/9m4kKYbGibkRc5l4Ne', '2020-01-01'),
         ('jill@ymail.com','$2a$12$VQ5HgWm34QQK2rJyLc0lmu59cy2jcZiV6U1.bE8rBBnC9VxDf/YQO', '2020-02-13');
 
-INSERT INTO rmbrme_people (person_name, type_of_person, user_id)
+INSERT INTO people (name, category, user_id)
     VALUES
         ('Darth Vader', 'Family', 1),
         ('Indiana', 'Friend', 1),
-        ('Rick', 'Co-Worker', 1),
+        ('Rick', 'Work', 1),
         ('James', 'Family', 2),
         ('Natalia', 'Friend', 2),
-        ('Joanna', 'Co-Worker', 2);
+        ('Joanna', 'Work', 2);
 
-INSERT INTO rmbrme_rmbrs (rmbr_title, rmbr_text, person_id, user_id)
+INSERT INTO rmbrs (title, description, person_id, user_id)
 	VALUES
 		('Hold grudge against the rebels', null, 1, 1),
 		('Die with my face mask off', 'I hope my son will not be there', 1, 1),
@@ -34,10 +33,5 @@ INSERT INTO rmbrme_rmbrs (rmbr_title, rmbr_text, person_id, user_id)
     	('Be used as an object by the men in the movie', null, 5, 2),
     	('Yell "confirmed" in a loud whisper voice', null, 6, 2),
     	('Apologize for Perfect Dark Zero', '... unti the end of time.', 6, 2);
-
-INSERT INTO roles(id, role)
-    VALUES
-        (1, 'Admin'),
-        (2, 'End-User');
 
  COMMIT;

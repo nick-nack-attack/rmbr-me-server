@@ -9,8 +9,8 @@ import * as jwt from 'jsonwebtoken';
 const AuthService = {
   getUserWithUsername: (user_name: any) => {
     return db
-      .from('rmbrme_users')
-      .where({user_name})
+      .from('users')
+      .where({ user_name })
       .first()
   },
 

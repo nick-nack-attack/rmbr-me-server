@@ -1,10 +1,10 @@
 import { DATABASE_URL } from '../config';
 
 // utilities
-import * as knex from 'knex';
+import Knex from 'knex';
 
 // database
-export const db = knex({
+export const db = Knex({
   client: 'pg',
   connection: DATABASE_URL
 });

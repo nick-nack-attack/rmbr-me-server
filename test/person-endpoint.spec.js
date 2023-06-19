@@ -45,7 +45,7 @@ describe('Person Endpoint', () => {
         return (
           supertest(app)
             .get('/api/person')
-            .set('Authorization', helpers.makeAuthHeader(testUserArray[0]))
+            .set('authorization', helpers.makeAuthHeader(testUserArray[0]))
             .expect(200, [])
         );
       });
@@ -150,8 +150,8 @@ describe('Person Endpoint', () => {
         this.retries(3);
         const testUser = testUserArray[0];
         const newPerson = {
-          person_name: 'Test Person',
-          type_of_person: 'Friend',
+          name: 'Test Person',
+          category: 'Friend',
           user_id: testUser.id
         };
         return (
@@ -162,7 +162,7 @@ describe('Person Endpoint', () => {
             .expect(201)
             .expect(res => {
               expect(res.body).to.have.property('id');
-              expect(res.body.person_name).to.eql(newPerson.person_name);
+              expect(res.body.name).to.eql(newPerson.name);
               expect(res.body.user_id).to.eql(testUser.id);
               expect(res.headers.location).to.eql(`/api/person/${res.body.id}`);
               const expectedDateCreated = new Date().toLocaleString();
@@ -254,7 +254,7 @@ describe('Person Endpoint', () => {
       it(`responds 404`, () => {
         const person_id = 1000;
         const updatedPerson = {
-          person_name: 'This is a New Name'
+          name: 'This is a New Name'
         };
         return (
           supertest(app)
@@ -285,9 +285,9 @@ describe('Person Endpoint', () => {
         this.retries(3);
         const person_id = 1;
         const updatedPerson = {
-          person_name: 'NEW NAME!!!',
+          name: 'NEW NAME!!!',
           user_id: 1,
-          type_of_person: 'Friend'
+          category: 'Friend'
         };
 
         const expectedPerson = {

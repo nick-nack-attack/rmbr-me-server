@@ -10,20 +10,39 @@ import RmbrService from "./rmbr-service";
 const jsonBodyParser = json();
 const rmbrRouter = Router();
 
+interface IRmbr {
+  id: number;
+  title: string;
+  description: string;
+  personId: number;
+  userId: number;
+  created: string;
+  modified: string;
+}
+
 rmbrRouter
   .route('/')
   .all(requireAuth)
   .get((req, res, next) => {
     RmbrService.getAllRmbrs(
     )
-      .then(rbr => {
-        res.json(rbr)
+      .then((rbrs) => {
+        const formattedRmbrs = rbrs.map((r) => {
+          return {
+            ...r,
+            personId: r.person_id,
+            userId: r.user_id,
+            dateCreated: r.date_created,
+            dateModified: r.date_modified,
+          }
+        })
+        res.json(formattedRmbrs)
       })
       .catch(next)
   })
   .post(jsonBodyParser, (req, res, next) => {
-    const {rmbr_title, rmbr_text, person_id, user_id} = req.body;
-    const newRmbr = {rmbr_title, rmbr_text, person_id, user_id};
+    const {title, description, person_id, user_id} = req.body;
+    const newRmbr = {title, description, person_id, user_id};
     for (const [key, value] of Object.entries(newRmbr))
       if (value === null)
         return res.status(400).json({
@@ -33,10 +52,18 @@ rmbrRouter
       newRmbr
     )
       .then(rmbr => {
+        const formattedRmbr = {
+          ...rmbr,
+          personId: rmbr.person_id,
+          userId: rmbr.user_id,
+          dateCreated: rmbr.date_created,
+          dateModified: rmbr.date_modified,
+        }
+
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${rmbr.id}`))
-          .json(RmbrService.serializeRmbr(rmbr))
+          .json(RmbrService.serializeRmbr(formattedRmbr))
       })
       .catch(next)
   })
@@ -64,8 +91,8 @@ rmbrRouter
       .catch(next)
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    const {rmbr_title, rmbr_text, person_id, user_id} = req.body;
-    const rmbrToUpdate = {rmbr_title, rmbr_text, person_id, user_id};
+    const {title, description, person_id, user_id} = req.body;
+    const rmbrToUpdate = {title, description, person_id, user_id};
     // if nothing is in request body, return error
     const numOfValues = Object.values(rmbrToUpdate).filter(Boolean).length
     if (numOfValues === 0) {
@@ -81,12 +108,19 @@ rmbrRouter
       rmbrToUpdate
     )
       .then(() => {
-        RmbrService.getAllRmbrs()
-          .then(rbr => {
-            res
-              .json(rbr)
-              .status(204)
-              .end()
+        RmbrService.getById(req.params.rmbr_id)
+          .then((rbr) => {
+            const formattedRmbr = {
+                ...rbr,
+                personId: rbr.person_id,
+                userId: rbr.user_id,
+                dateCreated: rbr.date_created,
+                dateModified: rbr.date_modified,
+            }
+
+            console.log(`found rbr: ${JSON.stringify(formattedRmbr)}`);
+
+            return res.json(formattedRmbr);
           })
           .catch(next)
       })
@@ -99,8 +133,17 @@ rmbrRouter
     RmbrService.getByUserId(
       +req.params.user_id
     )
-      .then(rbr => {
-        res.json(rbr)
+      .then((rbrs) => {
+        const formattedRmbrs = rbrs.map((r) => {
+          return {
+            ...r,
+            personId: r.person_id,
+            userId: r.user_id,
+            dateCreated: r.date_created,
+            dateModified: r.date_modified,
+          }
+        })
+        res.json(formattedRmbrs)
       })
       .catch(next)
   })

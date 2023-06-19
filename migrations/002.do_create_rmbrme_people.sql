@@ -1,15 +1,15 @@
 CREATE TYPE person_type AS ENUM (
   'Friend',
   'Family',
-  'Co-Worker'
+  'Work'
 );
 
-CREATE TABLE rmbrme_people (
+CREATE TABLE people (
     id SERIAL PRIMARY KEY,
-    person_name TEXT NOT NULL ,
-    type_of_person person_type,
-    user_id INTEGER REFERENCES rmbrme_users(id) ON DELETE CASCADE NOT NULL,
-    first_met TIMESTAMPTZ NOT NULL DEFAULT now(),
+    name TEXT NOT NULL ,
+    category person_type,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    first_met TIMESTAMPTZ,
     last_contact TIMESTAMPTZ,
     date_created TIMESTAMPTZ NOT NULL DEFAULT now(),
     date_modified TIMESTAMPTZ NOT NULL DEFAULT now()

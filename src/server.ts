@@ -1,11 +1,11 @@
 // tslint:disable-next-line:no-var-requires
-import {NODE_ENV, PORT} from './config';
+import { NODE_ENV, PORT } from './config';
 
 // middleware and configuration
-import * as express from "express";
-import * as morgan from "morgan";
-import * as cors from "cors";
-import * as helmet from "helmet";
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
+import helmet from "helmet";
 
 // routers
 import personRouter from "./person/person-router";

@@ -6,18 +6,18 @@ export function cleanTables(db) {
     return db.transaction(trx =>
         trx.raw(
             `TRUNCATE
-                rmbrme_users,
-                rmbrme_people,
-                rmbrme_rmbrs RESTART IDENTITY CASCADE`
+                users,
+                people,
+                rmbrs RESTART IDENTITY CASCADE`
         )
         .then(() =>
             Promise.all([
-                trx.raw(`ALTER SEQUENCE rmbrme_people_id_seq minvalue 0 START WITH 1`),
-                trx.raw(`ALTER SEQUENCE rmbrme_users_id_seq minvalue 0 START WITH 1`),
-                trx.raw(`ALTER SEQUENCE rmbrme_rmbrs_id_seq minvalue 0 START WITH 1`),
-                trx.raw(`SELECT setval('rmbrme_people_id_seq', 0)`),
-                trx.raw(`SELECT setval('rmbrme_users_id_seq', 0)`),
-                trx.raw(`SELECT setval('rmbrme_rmbrs_id_seq', 0)`)
+                trx.raw(`ALTER SEQUENCE people_id_seq minvalue 0 START WITH 1`),
+                trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
+                trx.raw(`ALTER SEQUENCE rmbrs_id_seq minvalue 0 START WITH 1`),
+                trx.raw(`SELECT setval('people_id_seq', 0)`),
+                trx.raw(`SELECT setval('users_id_seq', 0)`),
+                trx.raw(`SELECT setval('rmbrs_id_seq', 0)`)
             ])
         )
     );
@@ -49,8 +49,8 @@ export function makePersonArray(user) {
     return [
         {
             id: 1,
-            person_name: 'Test Person 1',
-            type_of_person: 'Family',
+            name: 'Test Person 1',
+            category: 'Family',
             user_id: user[0].id,
             first_met: new Date(),
             last_contact: new Date(),
@@ -59,8 +59,8 @@ export function makePersonArray(user) {
         },
         {
             id: 2,
-            person_name: 'Test Person 2',
-            type_of_person: 'Co-Worker',
+            name: 'Test Person 2',
+            category: 'Co-Worker',
             user_id: user[1].id,
             first_met: new Date('2029-01-22T16:28:32.615Z'),
             last_contact: new Date('2029-01-22T16:28:32.615Z'),
@@ -69,8 +69,8 @@ export function makePersonArray(user) {
         },
         {
             id: 3,
-            person_name: 'Test Person 3',
-            type_of_person: 'Friend',
+            name: 'Test Person 3',
+            category: 'Friend',
             user_id: user[2].id,
             first_met: new Date('2029-01-22T16:28:32.615Z'),
             last_contact: new Date('2029-01-22T16:28:32.615Z'),
@@ -85,8 +85,8 @@ export function makeRmbrArray(users, people) {
     return [
         {
             id: 1,
-            rmbr_title: 'RmbrListItem 1 Title',
-            rmbr_text: 'RmbrListItem 1 Text',
+            title: 'RmbrListItem 1 Title',
+            description: 'RmbrListItem 1 Text',
             person_id: people[0].id,
             date_created: new Date(),
             user_id: users[0].id,
@@ -94,8 +94,8 @@ export function makeRmbrArray(users, people) {
         },
         {
             id: 2,
-            rmbr_title: 'RmbrListItem 2 Title',
-            rmbr_text: 'RmbrListItem 2 Text',
+            title: 'RmbrListItem 2 Title',
+            description: 'RmbrListItem 2 Text',
             person_id: people[0].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[0].id,
@@ -103,8 +103,8 @@ export function makeRmbrArray(users, people) {
         },
         {
             id: 3,
-            rmbr_title: 'RmbrListItem 3 Title',
-            rmbr_text: 'RmbrListItem 3 Text',
+            title: 'RmbrListItem 3 Title',
+            description: 'RmbrListItem 3 Text',
             person_id: people[1].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[1].id,
@@ -112,8 +112,8 @@ export function makeRmbrArray(users, people) {
         },
         {
             id: 4,
-            rmbr_title: 'RmbrListItem 4 Title',
-            rmbr_text: 'RmbrListItem 4 Text',
+            title: 'RmbrListItem 4 Title',
+            description: 'RmbrListItem 4 Text',
             person_id: people[1].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[1].id,
@@ -121,8 +121,8 @@ export function makeRmbrArray(users, people) {
         },
         {
             id: 5,
-            rmbr_title: 'RmbrListItem 5 Title',
-            rmbr_text: 'RmbrListItem 5 Text',
+            title: 'RmbrListItem 5 Title',
+            description: 'RmbrListItem 5 Text',
             person_id: people[2].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[2].id,
@@ -130,8 +130,8 @@ export function makeRmbrArray(users, people) {
         },
         {
             id: 6,
-            rmbr_title: 'RmbrListItem 6 Title',
-            rmbr_text: 'RmbrListItem 6 Text',
+            title: 'RmbrListItem 6 Title',
+            description: 'RmbrListItem 6 Text',
             person_id: people[2].id,
             date_created: new Date('2029-01-22T16:28:32.615Z'),
             user_id: users[2].id,
@@ -149,25 +149,25 @@ export function seedTables(db, user, person, rmbr) {
                 ...usr,
                 password: bcrypt.hashSync(usr.password, 1)
             }));
-            await trx.into('rmbrme_users').insert(preppedUserArray);
+            await trx.into('users').insert(preppedUserArray);
             await trx.raw(
-                `SELECT setval('rmbrme_users_id_seq', ?)`,
+                `SELECT setval('users_id_seq', ?)`,
                 [user[user.length - 1].id]
             );
         }
 
         if (person.length > 0) {
-            await trx.into('rmbrme_people').insert(person);
+            await trx.into('people').insert(person);
             await trx.raw(
-                `SELECT setval('rmbrme_people_id_seq', ?)`,
+                `SELECT setval('people_id_seq', ?)`,
                 [person[person.length - 1].id]
             );
         }
 
         if (rmbr.length > 0) {
-            await trx.into('rmbrme_rmbrs').insert(rmbr);
+            await trx.into('rmbrs').insert(rmbr);
             await trx.raw(
-                `SELECT setval ('rmbrme_rmbrs_id_seq', ?)`,
+                `SELECT setval ('rmbrs_id_seq', ?)`,
                 [rmbr[rmbr.length - 1].id]
             );
         }
@@ -179,8 +179,8 @@ export function seedTables(db, user, person, rmbr) {
 export function makeExpectedPerson(person) {
     return {
         id: person.id,
-        person_name: person.person_name,
-        type_of_person: person.type_of_person,
+        name: person.name,
+        category: person.category,
         user_id: person.user_id,
         first_met: person.first_met.toISOString(),
         last_contact: person.last_contact.toISOString(),
@@ -194,8 +194,8 @@ export function makeExpectedRmbr(rmbr) {
 
     return {
         id: rmbr.id,
-        rmbr_title: rmbr.rmbr_title,
-        rmbr_text: rmbr.rmbr_text,
+        title: rmbr.title,
+        description: rmbr.description,
         person_id: rmbr.person_id,
         date_created: rmbr.date_created.toISOString(),
         user_id: rmbr.user_id,
@@ -207,8 +207,8 @@ export function makeMaliciousRmbr(person) {
 
     const maliciousRmbr = {
         id: 911,
-        rmbr_title: 'Naughty naughty very naughty <script>alert("xss");</script>',
-        rmbr_text: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+        title: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
         person_id: person.id,
         date_created: new Date().toISOString(),
         user_id: person.user_id,
@@ -216,8 +216,8 @@ export function makeMaliciousRmbr(person) {
     };
     const expectedRmbr = {
         ...makeExpectedRmbr([user], maliciousRmbr),
-        rmbr_title: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
-        rmbr_text: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
+        title: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
+        description: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
     };
     return {
         maliciousRmbr,

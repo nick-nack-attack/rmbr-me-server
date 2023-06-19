@@ -4,26 +4,26 @@ import { db } from '../database/connect';
 const RmbrService = {
   getAllRmbrs: () => {
     return db
-      .from('rmbrme_rmbrs')
+      .from('rmbrs')
       .select('*')
   },
   getById: (id: number|string) => {
     return db
-      .from('rmbrme_rmbrs')
+      .from('rmbrs')
       .select('*')
       .where('id', id)
       .first()
   },
   getByUserId: (uid: number) => {
     return db
-      .from('rmbrme_rmbrs')
+      .from('rmbrs')
       .select('*')
       .where('user_id', uid)
   },
   insertRmbr: (newRmbr: object) => {
     return db
       .insert(newRmbr)
-      .into('rmbrme_rmbrs')
+      .into('rmbrs')
       .returning('*')
       .then(([rmbr]: any) => rmbr)
       .then((rmbr: any) =>
@@ -32,23 +32,23 @@ const RmbrService = {
   },
   deleteRmbr: (id) => {
     return db
-      .from('rmbrme_rmbrs')
+      .from('rmbrs')
       .where('id', id)
       .delete()
   },
   updateRmbr: (id, newRmbrFields) => {
     return db
-      .from('rmbrme_rmbrs')
+      .from('rmbrs')
       .where('id', id)
       .update(newRmbrFields)
   },
   serializeRmbr: (rmbr) => {
     return {
       id: rmbr.id,
-      person_id: rmbr.person_id,
-      user_id: rmbr.user_id,
-      rmbr_title: xss.filterXSS(rmbr.rmbr_title),
-      rmbr_text: xss.filterXSS(rmbr.rmbr_text),
+      personId: rmbr.person_id,
+      userId: rmbr.user_id,
+      title: xss.filterXSS(rmbr.title),
+      description: xss.filterXSS(rmbr.description),
       category: rmbr.category,
       date_created: rmbr.date_created,
       date_modified: rmbr.date_modified

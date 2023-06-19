@@ -36,10 +36,7 @@ userRouter
           error: passwordError
         });
     // submit login with service
-    UserService.hasUserWithUserName(
-      req.app.get('db'),
-      userLogin.user_name
-    )
+    UserService.hasUserWithUserName(userLogin.user_name)
       .then((hasUserWithUserName) => {
         // if username is already taken, return error
         if (hasUserWithUserName) {
@@ -58,10 +55,7 @@ userRouter
               date_created: formattedDate
             };
             // insert new user into db
-            return UserService.insertUser(
-              req.app.get('db'),
-              newUser
-            )
+            return UserService.insertUser(newUser)
               .then(user => {
                 res.status(201)
                   .location(path.posix.join(req.originalUrl, `/${user.id}`))

@@ -159,7 +159,7 @@ describe(`rmbr endpoint`, () => {
                 this.retries(3);
                 const testUser = testUserArray[0];
                 const newRmbr = {
-                    rmbr_title: 'rmbr title',
+                    title: 'rmbr title',
                     person_id: 1,
                     user_id: 1
                 };
@@ -269,7 +269,7 @@ describe(`rmbr endpoint`, () => {
             it(`responds 404`, () => {
                 const rmbr_id = 1000;
                 const updatedRmbr = {
-                    rmbr_title: 'NEW RMBR TITLE'
+                    title: 'NEW RMBR TITLE'
                 };
                 return (
                     supertest(app)
@@ -301,8 +301,8 @@ describe(`rmbr endpoint`, () => {
                 this.retries(3);
                 const rmbr_id = 1;
                 const updatedRmbr = {
-                    rmbr_title: 'NEW RMBR TITLE!!',
-                    rmbr_text: 'new text',
+                    title: 'NEW RMBR TITLE!!',
+                  description: 'new text',
                     person_id: 1,
                     user_id: 1
                 };
