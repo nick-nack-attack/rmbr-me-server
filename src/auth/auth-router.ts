@@ -8,9 +8,7 @@ const authRouter = express.Router();
 import AuthService from './auth-service';
 import axios, { AxiosResponse } from "axios";
 import UserService, { IUserWithGoogle } from "../user/user-service";
-
-const CLIENT_ID = '899756612598-a3s6ko7i4dihnce2i924ifkk8sgm8k4g.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../config";
 
 interface IGoogleTokensResponse {
     access_token: string;
@@ -98,8 +96,8 @@ authRouter
     .post('/google', jsonBodyParser, async (req, res, next) => {
         const response = await axios.post("https://oauth2.googleapis.com/token", {
             code: req.body.code,
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
+            client_id: GOOGLE_CLIENT_ID,
+            client_secret: GOOGLE_CLIENT_SECRET,
             redirect_uri: 'postmessage',
             grant_type: 'authorization_code'
         });

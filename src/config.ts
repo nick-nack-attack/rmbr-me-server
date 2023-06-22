@@ -11,3 +11,5 @@ export const JWT_SECRET = process.env.JWT_SECRET;
 export const JWT_EXPIRY = +process.env.JWT_EXPIRY;
 export const API_TOKEN = process.env.API_TOKEN;
 export const ADMIN_PERMISSION = process.env.ADMIN_PERMISSION;
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
