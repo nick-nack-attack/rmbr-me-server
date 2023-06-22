@@ -51,7 +51,7 @@ rmbrRouter
     RmbrService.insertRmbr(
       newRmbr
     )
-      .then(rmbr => {
+      .then((rmbr) => {
         const formattedRmbr = {
           ...rmbr,
           personId: rmbr.person_id,

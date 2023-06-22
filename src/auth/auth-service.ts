@@ -1,13 +1,14 @@
 // authentication service
-import {db} from '../database/connect';
-import {JWT_EXPIRY, JWT_SECRET} from '../config';
+import { db } from '../database/connect';
+import { JWT_EXPIRY, JWT_SECRET } from '../config';
 
 // utils
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import { IUser } from "../user/user-service";
 
 const AuthService = {
-  getUserWithUsername: (user_name: any) => {
+  getUserWithUsername: (user_name: any): Promise<IUser> => {
     return db
       .from('users')
       .where({ user_name })
@@ -48,7 +49,6 @@ const AuthService = {
         .toString()
         .split(':')
   }
-
 };
 
 export default AuthService;

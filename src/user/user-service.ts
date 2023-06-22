@@ -6,6 +6,28 @@ import { db } from "../database/connect";
 // variable for special characters
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
+export interface IUser {
+  id: number;
+  role: number;
+  user_name: string;
+  password: string;
+  date_created: string;
+  date_modified: string;
+  google_sub: string;
+}
+
+interface IUserBase {
+  user_name: string;
+}
+
+export interface IUserWithPassword extends IUserBase{
+  password: string;
+}
+
+export interface IUserWithGoogle extends  IUserBase {
+  google_sub: string;
+}
+
 const UserService = {
   hasUserWithUserName: async (user_name: string) => {
     return db('users')
@@ -14,7 +36,7 @@ const UserService = {
       .then(user => !!user)
   },
 
-  insertUser: async (newUser: { password: string; user_name: any; date_created: string }) => {
+  insertUser: async (newUser: IUserWithPassword | IUserWithGoogle): Promise<IUser> => {
     return db
       .insert(newUser)
       .into('users')
