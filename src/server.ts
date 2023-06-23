@@ -13,6 +13,7 @@ import rmbrRouter from "./rmbr/rmbr-router";
 import authRouter from "./auth/auth-router";
 import userRouter from "./user/user-router";
 import {addDbMiddleware} from "./middleware/add-db";
+import feedbackRouter from "./feedback/feedback-router";
 
 // main express root
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/person", personRouter);
 app.use("/api/rmbr", rmbrRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/feedback", feedbackRouter);
 
 // define error handler
 const errorHandler = (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
