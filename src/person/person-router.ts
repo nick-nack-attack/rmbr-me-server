@@ -52,7 +52,7 @@ personRouter
     .all(requireAuth)
     .get((req, res, next) => {
         const {user_id} = req.params;
-        PersonService.getPersonByUserId(+user_id)
+        PersonService.getPeopleWithRmbrCountByUserId(+user_id)
             .then((person) => {
                 PersonService.serializePerson(
                     res.json(person)

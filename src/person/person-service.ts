@@ -1,6 +1,5 @@
 import xss from 'xss';
 import { db } from '../database/connect';
-import {IPerson} from "./types";
 
 const PersonService = {
   getAllPersons: () => {
@@ -13,9 +12,20 @@ const PersonService = {
         .where('id', id)
         .first()
   },
-  getPersonByUserId: (user_id: number) => {
+  getPeopleWithRmbrCountByUserId: (user_id: number) => {
     return PersonService.getAllPersons()
         .where('user_id', user_id)
+        .select('people.*')
+        .leftJoin(
+            db.from('rmbrs')
+                .select('person_id')
+                .count('id as numOfRmbrs')
+                .from('rmbrs')
+                .groupBy('person_id')
+                .as('rmbrs_count'),
+            'people.id',
+            'rmbrs_count.person_id'
+        );
   },
   insertPerson: (newPerson: object) => {
     return db
